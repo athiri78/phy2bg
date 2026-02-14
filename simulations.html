@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulations TP - Plateforme Physique UCD</title>
+    <link rel="stylesheet" href="simulations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo">UCD</div>
+                <h1 class="nav-title">Simulations Interactives</h1>
+            </div>
+            <div class="nav-center">
+                <a href="dashboard.html" class="nav-link">📚 Accueil</a>
+                <a href="resources.html" class="nav-link">📂 Ressources</a>
+                <a href="simulations.html" class="nav-link active">🔬 Simulations</a>
+                <a href="admin.html" class="nav-link">👨‍🏫 Admin</a>
+                <a href="stats.html" class="nav-link">📊 Stats</a>
+            </div>
+            <div class="nav-right">
+                <a href="dashboard.html" class="btn-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                    Retour
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="simulations-header">
+        <div class="container">
+            <h2>🔬 Laboratoire Virtuel PhET</h2>
+            <p class="header-subtitle">
+                Simulations interactives pour les 4 modules de physique
+            </p>
+            <div class="info-banner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 16v-4M12 8h.01"></path>
+                </svg>
+                <p>Ces simulations sont hébergées en ligne par PhET (Université du Colorado).
+                    Connexion internet requise. Cliquez sur "Lancer" pour ouvrir dans un nouvel onglet.</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="simulations-main">
+        <div class="container">
+
+            <!-- Module 1: Optique Géométrique -->
+            <section class="module-section">
+                <div class="module-header">
+                    <div class="module-icon optics">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4M12 8h.01"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Optique Géométrique</h3>
+                        <p>2 simulations disponibles</p>
+                    </div>
+                </div>
+
+                <table class="simulations-table">
+                    <thead>
+                        <tr>
+                            <th>Simulation</th>
+                            <th>Description</th>
+                            <th>Durée</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="sim-name">Réfraction de la lumière</td>
+                            <td>Explorez la loi de Snell-Descartes et observez la déviation des rayons lumineux</td>
+                            <td><span class="duration">~10 min</span></td>
+                            <td>
+                                <a href="https://phet.colorado.edu/sims/html/bending-light/latest/bending-light_all.html?locale=fr"
+                                    target="_blank" class="btn-launch">Lancer</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="sim-name">Lentilles et Miroirs</td>
+                            <td>Manipulez des lentilles convergentes et divergentes pour observer la formation d'images
+                            </td>
+                            <td><span class="duration">~15 min</span></td>
+                            <td>
+                                <a href="https://phet.colorado.edu/sims/html/geometric-optics/latest/geometric-optics_all.html?locale=fr"
+                                    target="_blank" class="btn-launch">Lancer</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Module 2: Électrostatique -->
+            <section class="module-section">
+                <div class="module-header">
+                    <div class="module-icon electrostatics">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Électrostatique</h3>
+                        <p>3 simulations disponibles</p>
+                    </div>
+                </div>
+
+                <table class="simulations-table">
+                    <thead>
+                        <tr>
+                            <th>Simulation</th>
+                            <th>Description</th>
+                            <th>Durée</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="sim-name">Loi de Coulomb</td>
+                            <td>Visualisez la force électrostatique entre deux charges ponctuelles</td>
+                            <td><span class="duration">~10 min</span></td>
+                            <td>
+                                <a href="https://phet.colorado.edu/sims/html/coulombs-law/latest/coulombs-law_all.html?locale=fr"
+                                    target="_blank" class="btn-launch">Lancer</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="sim-name">Charges et Champs Électriques</td>
+                            <td>Placez des charges et visualisez le champ électrique résultant</td>
+                            <td><span class="duration">~12 min</span></td>
+                            <td>
+                                <a href="https://phet.colorado.edu/sims/html/charges-and-fields/latest/charges-and-fields_all.html?locale=fr"
+                                    target="_blank" class="btn-launch">Lancer</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="sim-name">Condensateurs</td>
+                            <td>Explorez la capacité d'un condensateur plan et son comportement</td>
+                            <td><span class="duration">~10 min</span></td>
+                            <td>
+                                <a href="https://phet.colorado.edu/sims/html/capacitor-lab-basics/latest/capacitor-lab-basics_all.html?locale=fr"
+                                    target="_blank" class="btn-launch">Lancer</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Module 3: Électrocinétique -->
+            <section class="module-section">
+                <div class="module-header">
+                    <div class="module-icon electrokinetics">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Électrocinétique</h3>
+                        <p>2 simulations disponibles</p>
+                    </div>
+                </div>
+
+                <table class="simulations-table">
+                    <thead>
+                        <tr>
+                            <th>Simulation</th>
+                            <th>Description</th>
+                            <th>Durée</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="sim-name">Loi d'Ohm</td>
+                            <td>Découvrez la relation entre tension, courant et résistance</td>
+                            <td><span class="duration">~8 min</span></td>
+                            <td>
+                                <a href="https://phet.colorado.edu/sims/html/ohms-law/latest/ohms-law_all.html?locale=fr"
+                                    target="_blank" class="btn-launch">Lancer</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="sim-name">Construction de Circuits DC</td>
+                            <td>Construisez des circuits avec résistances, piles et mesurez les grandeurs</td>
+                            <td><span class="duration">~15 min</span></td>
+                            <td>
+                                <a href="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_all.html?locale=fr"
+                                    target="_blank" class="btn-launch">Lancer</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Module 4: Magnétisme -->
+            <section class="module-section">
+                <div class="module-header">
+                    <div class="module-icon magnetism">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9a6 6 0 0 1 12 0c0 8-6 13-6 13s-6-5-6-13z"></path>
+                            <circle cx="12" cy="9" r="2"></circle>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Magnétostatique</h3>
+                        <p>3 simulations disponibles</p>
+                    </div>
+                </div>
+
+                <table class="simulations-table">
+                    <thead>
+                        <tr>
+                            <th>Simulation</th>
+                            <th>Description</th>
+                            <th>Durée</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="sim-name">Aimant et Boussole</td>
+                            <td>Visualisez le champ magnétique d'un aimant avec une boussole</td>
+                            <td><span class="duration">~10 min</span></td>
+                            <td>
+                                <a href="https://phet.colorado.edu/sims/html/magnet-and-compass/latest/magnet-and-compass_all.html?locale=fr"
+                                    target="_blank" class="btn-launch">Lancer</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="sim-name">Loi de Faraday</td>
+                            <td>Découvrez l'induction électromagnétique en déplaçant un aimant dans une bobine</td>
+                            <td><span class="duration">~12 min</span></td>
+                            <td>
+                                <a href="https://phet.colorado.edu/sims/html/faradays-law/latest/faradays-law_all.html?locale=fr"
+                                    target="_blank" class="btn-launch">Lancer</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="sim-name">Aimants et Électroaimants</td>
+                            <td>Comparez les aimants permanents et créez des électroaimants</td>
+                            <td><span class="duration">~10 min</span></td>
+                            <td>
+                                <a href="https://phet.colorado.edu/sims/html/magnets-and-electromagnets/latest/magnets-and-electromagnets_all.html?locale=fr"
+                                    target="_blank" class="btn-launch">Lancer</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="simulations-footer">
+        <div class="container">
+            <p>Simulations fournies par <a href="https://phet.colorado.edu/fr/" target="_blank">PhET Interactive
+                    Simulations</a> - Université du Colorado Boulder</p>
+            <p>&copy; 2026 Faculté des Sciences El Jadida - Université Chouaib Doukkali</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+</body>
+
+</html>

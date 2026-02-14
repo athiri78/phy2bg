@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Plateforme Physique UCD</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar Admin -->
+    <nav class="admin-navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo">UCD</div>
+                <h1 class="nav-title">Administration</h1>
+            </div>
+            <div class="nav-center">
+                <a href="dashboard.html" class="nav-link">📚 Accueil</a>
+                <a href="resources.html" class="nav-link">📂 Ressources</a>
+                <a href="simulations.html" class="nav-link">🔬 Simulations</a>
+                <a href="admin.html" class="nav-link active">👨‍🏫 Admin</a>
+                <a href="stats.html" class="nav-link">📊 Stats</a>
+            </div>
+            <div class="nav-right">
+                <div class="admin-profile">
+                    <span class="admin-name">Pr. Abdellah Tahiri</span>
+                    <div class="admin-avatar">AT</div>
+                </div>
+                <a href="index.html" class="btn-logout">Déconnexion</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                    Tableau de bord
+                </li>
+                <li class="menu-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Étudiants
+                </li>
+                <li class="menu-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    Rapports
+                </li>
+                <li class="menu-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                        </path>
+                    </svg>
+                    Paramètres
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Content -->
+        <main class="admin-main">
+            <!-- Database Management Section -->
+            <section class="database-section">
+                <div class="section-header">
+                    <h2>Gestion de la Base de Données</h2>
+                    <span class="admin-badge">ZONE ADMIN</span>
+                </div>
+
+                <div class="db-warning-card">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                        </path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <div>
+                        <h3>Attention : Actions Irréversibles</h3>
+                        <p>Ces outils modifient directement les données stockées localement. Assurez-vous d'avoir
+                            exporté les résultats importants avant toute réinitialisation.</p>
+                    </div>
+                </div>
+
+                <div class="db-controls">
+                    <!-- Initialization Card -->
+                    <div class="db-control-card">
+                        <div class="db-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                                </path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                        </div>
+                        <div class="db-info">
+                            <h4>Initialisation / Démo</h4>
+                            <p>Génère un jeu de données complet pour la démonstration.</p>
+                            <ul class="db-details">
+                                <li>• 50 étudiants fictifs</li>
+                                <li>• ~200 résultats de tests</li>
+                                <li>• Données réalistes (Noms, Notes...)</li>
+                            </ul>
+                        </div>
+                        <button id="initDbBtn" class="btn-init">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="12" y1="18" x2="12" y2="12"></line>
+                                <line x1="9" y1="15" x2="15" y2="15"></line>
+                            </svg>
+                            Générer les Données
+                        </button>
+                    </div>
+
+                    <!-- Reset Card -->
+                    <div class="db-control-card">
+                        <div class="db-icon danger">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path
+                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                </path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                        </div>
+                        <div class="db-info">
+                            <h4>Réinitialisation Complète</h4>
+                            <p>Supprime toutes les données de la plateforme.</p>
+                            <ul class="db-details">
+                                <li>• Suppression des étudiants</li>
+                                <li>• Suppression des résultats</li>
+                                <li>• Retour à l'état vide</li>
+                            </ul>
+                        </div>
+                        <button id="resetDbBtn" class="btn-reset">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                                <line x1="12" y1="2" x2="12" y2="12"></line>
+                            </svg>
+                            Tout Supprimer
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section (Initially Hidden via CSS handled by JS toggling) -->
+            <section id="settings-section" class="database-section" style="display: none; border-color: #3b82f6;">
+                <div class="section-header">
+                    <h2>Paramètres de Sécurité</h2>
+                </div>
+
+                <div class="db-controls" style="grid-template-columns: 1fr;">
+                    <div class="db-control-card">
+                        <div class="db-info">
+                            <h4>Changer le mot de passe Administrateur</h4>
+                            <p>Mettez à jour le mot de passe utilisé pour la connexion et les actions sensibles.</p>
+
+                            <form id="changePasswordForm" style="margin-top: 1.5rem; max-width: 400px;">
+                                <div style="margin-bottom: 1rem;">
+                                    <label
+                                        style="display:block; margin-bottom:0.5rem; color:var(--text-secondary);">Ancien
+                                        mot de passe</label>
+                                    <input type="password" id="oldPass" required
+                                        style="width:100%; padding:0.75rem; border:2px solid var(--border); border-radius:var(--radius-md);">
+                                </div>
+                                <div style="margin-bottom: 1.5rem;">
+                                    <label
+                                        style="display:block; margin-bottom:0.5rem; color:var(--text-secondary);">Nouveau
+                                        mot de passe</label>
+                                    <input type="password" id="newPass" required
+                                        style="width:100%; padding:0.75rem; border:2px solid var(--border); border-radius:var(--radius-md);">
+                                </div>
+                                <button type="submit" class="btn-init" style="width:auto; padding:0.75rem 2rem;">
+                                    Mettre à jour
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- KPI Cards -->
+            <section class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-icon students">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <p class="stat-label">Étudiants Inscrits</p>
+                        <h3 class="stat-value">156</h3>
+                        <span class="stat-change positive">+12 ce mois</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon tests">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <p class="stat-label">Tests Complétés</p>
+                        <h3 class="stat-value">342</h3>
+                        <span class="stat-change positive">+28 cette semaine</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon average">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <p class="stat-label">Score Moyen</p>
+                        <h3 class="stat-value">74%</h3>
+                        <span class="stat-change positive">+3% vs semestre dernier</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon completion">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <p class="stat-label">Taux de Complétion</p>
+                        <h3 class="stat-value">87%</h3>
+                        <span class="stat-change neutral">Stable</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters & Search -->
+            <section class="filters-section">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Rechercher un étudiant...">
+                </div>
+                <div class="filter-buttons">
+                    <select class="filter-select" id="moduleFilter">
+                        <option value="">Tous les modules</option>
+                        <option value="Optique">Optique Géométrique</option>
+                        <option value="Électrostatique">Électrostatique</option>
+                        <option value="Électrocinétique">Électrocinétique</option>
+                        <option value="Magnétisme">Magnétisme</option>
+                    </select>
+                    <select class="filter-select" id="dateFilter">
+                        <option value="">Toutes les périodes</option>
+                        <option value="today">Aujourd'hui</option>
+                        <option value="week">Cette semaine</option>
+                        <option value="month">Ce mois</option>
+                    </select>
+                    <button class="btn btn-export" id="exportBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Exporter Excel
+                    </button>
+                </div>
+            </section>
+
+            <!-- Results Table -->
+            <section class="results-section">
+                <h2 class="section-title">Résultats Récents</h2>
+                <div class="table-container">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Étudiant</th>
+                                <th>Email</th>
+                                <th>Module</th>
+                                <th>Score</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <!-- Rows will be injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+    <script src="auth.js"></script>
+</body>
+
+</html>

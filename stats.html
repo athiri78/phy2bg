@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques - Plateforme Physique UCD</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="stats.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Navbar Admin -->
+    <nav class="admin-navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo">UCD</div>
+                <h1 class="nav-title">Statistiques</h1>
+            </div>
+            <div class="nav-center">
+                <a href="dashboard.html" class="nav-link">📚 Accueil</a>
+                <a href="resources.html" class="nav-link">📂 Ressources</a>
+                <a href="simulations.html" class="nav-link">🔬 Simulations</a>
+                <a href="admin.html" class="nav-link">👨‍🏫 Admin</a>
+                <a href="stats.html" class="nav-link active">📊 Stats</a>
+            </div>
+            <div class="nav-right">
+                <div class="admin-profile">
+                    <span class="admin-name">Pr. Abdellah Tahiri</span>
+                    <div class="admin-avatar">AT</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="stats-container">
+        <main class="stats-main">
+
+            <!-- Header avec sélection d'année -->
+            <section class="stats-header">
+                <div>
+                    <h2>Analyse des Performances</h2>
+                    <p>Évolution des utilisateurs et taux de réussite par année</p>
+                </div>
+                <div class="year-selector">
+                    <select id="yearFilter" class="filter-select">
+                        <option value="all">Toutes les années</option>
+                        <option value="2026">2025/2026</option>
+                        <option value="2025">2024/2025</option>
+                        <option value="2024">2023/2024</option>
+                        <option value="2023">2022/2023</option>
+                        <option value="2022">2021/2022</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Cards récapitulatives -->
+            <section class="summary-cards">
+                <div class="summary-card blue">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        </svg>
+                    </div>
+                    <div class="card-content">
+                        <p class="card-label">Total Utilisateurs (5 ans)</p>
+                        <h3 class="card-value">1,247</h3>
+                        <span class="card-trend positive">+18% vs année dernière</span>
+                    </div>
+                </div>
+
+                <div class="summary-card green">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="card-content">
+                        <p class="card-label">Taux de Réussite Moyen</p>
+                        <h3 class="card-value">74.2%</h3>
+                        <span class="card-trend positive">+2.1% vs année dernière</span>
+                    </div>
+                </div>
+
+                <div class="summary-card orange">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                    </div>
+                    <div class="card-content">
+                        <p class="card-label">Tests Complétés</p>
+                        <h3 class="card-value">4,892</h3>
+                        <span class="card-trend positive">+342 cette année</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Graphique principal : Utilisateurs par année -->
+            <section class="chart-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>📊 Nombre d'Utilisateurs par Année Universitaire</h3>
+                        <p>Évolution du nombre d'étudiants inscrits sur la plateforme</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="usersChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Graphique : Taux de réussite par année -->
+            <section class="chart-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>📈 Pourcentage de Réussite par Année</h3>
+                        <p>Taux de réussite moyen aux tests (score ≥ 60%)</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="successRateChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Graphiques combinés -->
+            <section class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Score Moyen par Module</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="moduleScoresChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Distribution des Notes</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="gradeDistributionChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tableau détaillé par année -->
+            <section class="data-table-section">
+                <h3>📋 Données Détaillées par Année</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Année Universitaire</th>
+                                <th>Nombre d'Étudiants</th>
+                                <th>Tests Passés</th>
+                                <th>Score Moyen</th>
+                                <th>Taux de Réussite</th>
+                                <th>Évolution</th>
+                            </tr>
+                        </thead>
+                        <tbody id="yearlyDataTable">
+                            <tr>
+                                <td><strong>2025/2026</strong></td>
+                                <td>156</td>
+                                <td>342</td>
+                                <td>74.5%</td>
+                                <td><span class="badge success">76.3%</span></td>
+                                <td><span class="trend positive">+2.1%</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>2024/2025</strong></td>
+                                <td>189</td>
+                                <td>1,024</td>
+                                <td>72.8%</td>
+                                <td><span class="badge success">74.2%</span></td>
+                                <td><span class="trend positive">+1.5%</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>2023/2024</strong></td>
+                                <td>234</td>
+                                <td>1,287</td>
+                                <td>71.6%</td>
+                                <td><span class="badge good">72.7%</span></td>
+                                <td><span class="trend positive">+0.8%</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>2022/2023</strong></td>
+                                <td>312</td>
+                                <td>1,456</td>
+                                <td>71.1%</td>
+                                <td><span class="badge good">71.9%</span></td>
+                                <td><span class="trend negative">-1.2%</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>2021/2022</strong></td>
+                                <td>356</td>
+                                <td>783</td>
+                                <td>70.2%</td>
+                                <td><span class="badge average">73.1%</span></td>
+                                <td><span class="trend neutral">—</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Boutons d'export -->
+            <section class="export-section">
+                <button class="btn btn-export" onclick="exportToPDF()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Exporter en PDF
+                </button>
+                <button class="btn btn-export" onclick="exportToExcel()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    Exporter en Excel
+                </button>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="stats.js"></script>
+    <script src="auth.js"></script>
+</body>
+
+</html>

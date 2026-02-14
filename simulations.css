@@ -1,0 +1,349 @@
+/* Simulations Page CSS - Table Layout */
+@import url('styles.css');
+
+body {
+    background: #f9fafb;
+}
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.nav-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.btn-back:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-back svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Header */
+.simulations-header {
+    background: white;
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.simulations-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.header-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-banner {
+    background: rgba(59, 130, 246, 0.1);
+    border-left: 4px solid var(--primary-color);
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    gap: 1rem;
+    align-items: start;
+}
+
+.info-banner svg {
+    width: 24px;
+    height: 24px;
+    color: var(--primary-color);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.info-banner p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Main */
+.simulations-main {
+    padding: 2rem;
+}
+
+/* Module Sections */
+.module-section {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.module-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--background);
+}
+
+.module-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.module-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.module-icon.optics {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+}
+
+.module-icon.electrostatics {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.module-icon.electrokinetics {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.module-icon.magnetism {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--secondary-color);
+}
+
+.module-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.module-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Tables */
+.simulations-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.simulations-table thead {
+    background: var(--background);
+}
+
+.simulations-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border);
+}
+
+.simulations-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+.simulations-table tbody tr:hover {
+    background: var(--background);
+}
+
+.simulations-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.simulations-table td {
+    padding: 1.25rem 1rem;
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+.sim-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 200px;
+}
+
+.duration {
+    display: inline-block;
+    padding: 0.375rem 0.875rem;
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.btn-launch {
+    display: inline-block;
+    padding: 0.625rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-launch:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Footer */
+.simulations-footer {
+    background: white;
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.simulations-footer p {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.simulations-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.simulations-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .simulations-main {
+        padding: 1rem;
+    }
+
+    .module-section {
+        padding: 1rem;
+    }
+
+    .simulations-table {
+        font-size: 0.875rem;
+    }
+
+    .simulations-table th,
+    .simulations-table td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .sim-name {
+        min-width: auto;
+    }
+
+    /* Stack table on mobile */
+    .simulations-table thead {
+        display: none;
+    }
+
+    .simulations-table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+    }
+
+    .simulations-table td {
+        display: block;
+        text-align: left;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .simulations-table td:last-child {
+        border-bottom: none;
+    }
+
+    .simulations-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.813rem;
+        text-transform: uppercase;
+    }
+
+    .btn-launch {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+}

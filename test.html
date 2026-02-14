@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test en cours - Optique Géométrique</title>
+    <link rel="stylesheet" href="test.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    <!-- Header du test -->
+    <header class="test-header">
+        <div class="test-header-container">
+            <div class="header-left">
+                <!-- Back button removed per user request -->
+                <div class="logo">UCD</div>
+                <div class="test-info">
+                    <h1 class="test-title">Test - Optique Géométrique</h1>
+                    <p class="test-subtitle">Réflexion et Réfraction</p>
+                </div>
+            </div>
+            <div class="test-timer">
+                <svg class="timer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span class="timer-text">18:32</span>
+            </div>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" style="width: 25%"></div>
+        </div>
+    </header>
+
+    <main class="test-main">
+        <div class="test-container">
+            <!-- Zone de question principale -->
+            <div class="question-section">
+                <div class="question-header">
+                    <div class="question-number">
+                        <span class="current-q">3</span>
+                        <span class="separator">/</span>
+                        <span class="total-q">12</span>
+                    </div>
+                    <div class="question-difficulty">
+                        <span class="difficulty-badge difficulty-1">⭐ Basique</span>
+                        <span class="points-badge">1 point</span>
+                    </div>
+                </div>
+
+                <div class="question-content">
+                    <p class="question-text">
+                        Que se passe-t-il lorsque la lumière passe de l'air au verre ?
+                    </p>
+                </div>
+
+                <div class="options-container">
+                    <div class="option-card">
+                        <input type="radio" name="answer" id="opt-a" value="A">
+                        <label for="opt-a">
+                            <span class="option-letter">A</span>
+                            <span class="option-text">Sa vitesse augmente</span>
+                            <span class="option-check">✓</span>
+                        </label>
+                    </div>
+
+                    <div class="option-card option-selected">
+                        <input type="radio" name="answer" id="opt-b" value="B" checked>
+                        <label for="opt-b">
+                            <span class="option-letter">B</span>
+                            <span class="option-text">Sa vitesse diminue</span>
+                            <span class="option-check">✓</span>
+                        </label>
+                    </div>
+
+                    <div class="option-card">
+                        <input type="radio" name="answer" id="opt-c" value="C">
+                        <label for="opt-c">
+                            <span class="option-letter">C</span>
+                            <span class="option-text">Sa vitesse reste constante</span>
+                            <span class="option-check">✓</span>
+                        </label>
+                    </div>
+
+                    <div class="option-card">
+                        <input type="radio" name="answer" id="opt-d" value="D">
+                        <label for="opt-d">
+                            <span class="option-letter">D</span>
+                            <span class="option-text">Sa fréquence change</span>
+                            <span class="option-check">✓</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="question-navigation">
+                    <button class="btn btn-secondary">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        Précédent
+                    </button>
+
+                    <button class="btn btn-clear">Effacer la réponse</button>
+
+                    <button class="btn btn-primary">
+                        Suivant
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar avec minimap des questions -->
+            <aside class="questions-sidebar">
+                <div class="sidebar-sticky">
+                    <h3 class="sidebar-title">Questions</h3>
+                    <div class="questions-grid">
+                        <button class="question-mini answered">1</button>
+                        <button class="question-mini answered">2</button>
+                        <button class="question-mini active">3</button>
+                        <button class="question-mini">4</button>
+                        <button class="question-mini">5</button>
+                        <button class="question-mini answered">6</button>
+                        <button class="question-mini">7</button>
+                        <button class="question-mini">8</button>
+                        <button class="question-mini">9</button>
+                        <button class="question-mini">10</button>
+                        <button class="question-mini">11</button>
+                        <button class="question-mini">12</button>
+                    </div>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-box answered"></div>
+                            <span>Répondue</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box active"></div>
+                            <span>En cours</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box"></div>
+                            <span>Non répondue</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-submit">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        Soumettre le test
+                    </button>
+
+                    <button class="btn btn-exit">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+                        </svg>
+                        Quitter
+                    </button>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Modal de confirmation (caché par défaut) -->
+    <div class="modal" id="submitModal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <h3>Soumettre le test ?</h3>
+            <p>Vous avez répondu à <strong>3 questions sur 12</strong>.</p>
+            <p>Voulez-vous vraiment soumettre votre test maintenant ?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary">Continuer le test</button>
+                <button class="btn btn-primary">Oui, soumettre</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="test.js"></script>
+    <script src="auth.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ressources Pédagogiques - Plateforme Physique UCD</title>
+    <link rel="stylesheet" href="resources.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo">UCD</div>
+                <h1 class="nav-title">Ressources Pédagogiques</h1>
+            </div>
+            <div class="nav-center">
+                <a href="dashboard.html" class="nav-link">📚 Accueil</a>
+                <a href="resources.html" class="nav-link active">📂 Ressources</a>
+                <a href="simulations.html" class="nav-link">🔬 Simulations</a>
+                <a href="admin.html" class="nav-link">👨‍🏫 Admin</a>
+                <a href="stats.html" class="nav-link">📊 Stats</a>
+            </div>
+            <div class="nav-right">
+                <a href="dashboard.html" class="btn-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                    Retour au Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="resources-main">
+        <div class="container">
+
+            <!-- Header Section -->
+            <header class="page-header">
+                <div>
+                    <h2>🗂️ Bibliothèque de Documents</h2>
+                    <p>Téléchargez et consultez les supports de cours, séries de TD et anciens examens.</p>
+                </div>
+                <button id="uploadTriggerBtn" class="btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Ajouter un document
+                </button>
+            </header>
+
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <div class="tab-list">
+                    <button class="tab-btn active" data-tab="cours">
+                        <span class="tab-icon">📘</span> Cours Magistraux
+                    </button>
+                    <button class="tab-btn" data-tab="td">
+                        <span class="tab-icon">📝</span> Travaux Dirigés (TD)
+                    </button>
+                    <button class="tab-btn" data-tab="examens">
+                        <span class="tab-icon">🎓</span> Examens & Corrigés
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Modal (Hidden by default) -->
+            <div id="uploadModal" class="modal-overlay hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>📤 Ajouter un nouveau fichier</h3>
+                        <button id="closeModalBtn" class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="uploadForm">
+                            <div class="form-group">
+                                <label for="docTitle">Titre du document</label>
+                                <input type="text" id="docTitle" placeholder="Ex: Chapitre 1 - Optique Géométrique"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="docCategory">Catégorie</label>
+                                <select id="docCategory">
+                                    <option value="cours">Cours Magistral</option>
+                                    <option value="td">Travaux Dirigés (TD)</option>
+                                    <option value="examens">Examen / Contrôle</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="docModule">Module associé</label>
+                                <select id="docModule">
+                                    <option value="Optique">Optique Géométrique</option>
+                                    <option value="Électrostatique">Électrostatique</option>
+                                    <option value="Électrocinétique">Électrocinétique</option>
+                                    <option value="Magnétisme">Magnétostatique</option>
+                                </select>
+                            </div>
+
+                            <div class="upload-area" id="dropZone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <p>Glissez-déposez votre fichier PDF ici<br>ou <span class="browser-link">parcourir les
+                                        fichiers</span></p>
+                                <input type="file" id="fileInput" accept=".pdf" hidden>
+                                <div id="fileNamePreview" class="file-preview"></div>
+                            </div>
+
+                            <div class="modal-actions">
+                                <button type="button" class="btn-secondary" id="cancelBtn">Annuler</button>
+                                <button type="submit" class="btn-primary">Publier le document</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid : Cours -->
+            <section id="cours" class="content-section active">
+                <div class="empty-state hidden" id="empty-cours">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <h3>Aucun cours disponible</h3>
+                    <p>Soyez le premier à partager un cours !</p>
+                </div>
+                <div class="resources-grid" id="cours-grid">
+                    <!-- Les cartes seront injectées dynamiquement via JS -->
+                </div>
+            </section>
+
+            <!-- Content Grid : TD -->
+            <section id="td" class="content-section">
+                <div class="empty-state hidden" id="empty-td">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    </svg>
+                    <h3>Aucun TD disponible</h3>
+                </div>
+                <div class="resources-grid" id="td-grid"></div>
+            </section>
+
+            <!-- Content Grid : Examens -->
+            <section id="examens" class="content-section">
+                <div class="empty-state hidden" id="empty-examens">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                        </polygon>
+                    </svg>
+                    <h3>Aucun examen disponible</h3>
+                </div>
+                <div class="resources-grid" id="examens-grid"></div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="resources.js"></script>
+    <script src="auth.js"></script>
+</body>
+
+</html>

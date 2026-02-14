@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plateforme d'Évaluation - Physique UCD</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Page d'accueil / Connexion -->
+    <div class="login-container">
+        <!-- Header avec informations institutionnelles -->
+        <header class="institution-header">
+            <div class="institution-logo">
+                <div class="logo-placeholder">UCD</div>
+            </div>
+            <div class="institution-info">
+                <h1>Faculté des Sciences El Jadida - Université Chouaib Doukkali</h1>
+                <!-- <h2>Faculté des Sciences El Jadida</h2> Redundant now -->
+                <p class="academic-info">Année Universitaire 2025/2026 - Semestre 2</p>
+                <p class="professor-info">Pr. Abdellah Tahiri</p>
+            </div>
+        </header>
+
+        <!-- Card de connexion -->
+        <div class="login-card">
+            <div class="card-header">
+                <h3>Plateforme d'Évaluation en Physique</h3>
+                <p class="subtitle">Connectez-vous pour accéder à vos tests</p>
+            </div>
+
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="email">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Email étudiant
+                    </label>
+                    <input type="email" id="email" placeholder="prenom.nom@etu.ucd.ac.ma" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Mot de passe
+                    </label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="remember">
+                        <span class="checkmark"></span>
+                        Se souvenir de moi
+                    </label>
+                    <a href="#" class="link-text">Mot de passe oublié ?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Se connecter
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+
+                <div class="divider">
+                    <span>ou</span>
+                </div>
+
+                <button type="button" class="btn btn-secondary">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <path d="M20 8v6M23 11h-6"></path>
+                    </svg>
+                    Créer un compte étudiant
+                </button>
+            </form>
+
+            <div class="modules-preview">
+                <h4>Modules disponibles</h4>
+                <div class="modules-tags">
+                    <span class="tag tag-blue">Optique géométrique</span>
+                    <span class="tag tag-yellow">Électrostatique</span>
+                    <span class="tag tag-green">Électrocinétique</span>
+                    <span class="tag tag-purple">Magnétostatique</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="login-footer">
+            <p>&copy; 2026 Université Chouaib Doukkali - Faculté des Sciences El Jadida</p>
+            <div class="footer-links">
+                <a href="#">Aide</a>
+                <span>•</span>
+                <a href="#">Contact</a>
+                <span>•</span>
+                <a href="#">À propos</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="auth.js"></script>
+    <!-- Modal Inscription -->
+    <div id="registerModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Création de compte étudiant</h3>
+                <button type="button" class="close-btn" id="closeRegisterModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="modal-form-group half-width">
+                        <div>
+                            <label for="regNom">Nom</label>
+                            <input type="text" id="regNom" required placeholder="Ex: Alami">
+                        </div>
+                        <div>
+                            <label for="regPrenom">Prénom</label>
+                            <input type="text" id="regPrenom" required placeholder="Ex: Ahmed">
+                        </div>
+                    </div>
+
+                    <div class="modal-form-group">
+                        <label for="regEmail">Email Académique</label>
+                        <input type="email" id="regEmail" required placeholder="prenom.nom@etu.ucd.ac.ma">
+                        <small style="color: var(--text-secondary); font-size: 0.8rem;">Utilisez votre email
+                            institutionnel</small>
+                    </div>
+
+                    <div class="modal-form-group">
+                        <label for="regCNE">CNE (Code National de l'Étudiant)</label>
+                        <input type="text" id="regCNE" required placeholder="Ex: D130000000">
+                    </div>
+
+                    <div class="modal-form-group">
+                        <label for="regPassword">Mot de passe</label>
+                        <input type="password" id="regPassword" required placeholder="Min. 6 caractères">
+                    </div>
+
+                    <div class="modal-form-group">
+                        <label for="regConfirmPassword">Confirmer le mot de passe</label>
+                        <input type="password" id="regConfirmPassword" required placeholder="Répétez le mot de passe">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="cancelRegister">Annuler</button>
+                <button type="submit" form="registerForm" class="btn btn-primary">S'inscrire</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

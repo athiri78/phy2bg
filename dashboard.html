@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Plateforme Physique UCD</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">UCD</div>
+            <span class="university-name">Université Chouaïb Doukkali</span>
+        </div>
+        <div class="nav-center">
+            <a href="dashboard.html" class="nav-link active">📚 Accueil</a>
+            <a href="resources.html" class="nav-link">📂 Ressources</a>
+            <a href="simulations.html" class="nav-link">🔬 Simulations</a>
+            <a href="admin.html" class="nav-link">👨‍🏫 Admin</a>
+            <a href="stats.html" class="nav-link">📊 Stats</a>
+        </div>
+        <div class="nav-right">
+            <span class="user-name">Ahmed Alami</span>
+            <div class="user-avatar">AA</div>
+            <a href="index.html" class="logout-btn">Déconnexion</a>
+        </div>
+    </nav>
+
+    <!-- Header du tableau de bord -->
+    <header class="dashboard-header">
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h2 id="welcome-greeting">Bonjour 👋</h2>
+                    <p class="header-subtitle">
+                        Faculté des Sciences El Jadida - Université Chouaïb Doukkali<br>
+                        <span class="academic-badge">S2 2025/2026</span> ·
+                        <span class="professor-badge">Pr. Abdellah Tahiri</span>
+                    </p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Historique
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <div class="container">
+            <div class="dashboard-grid">
+                <!-- Colonne principale -->
+                <div class="main-column">
+                    <!-- Statistiques rapides -->
+                    <section class="stats-section">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon stat-icon-blue">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 11l3 3L22 4"></path>
+                                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                    </svg>
+                                </div>
+                                <div class="stat-info">
+                                    <p class="stat-label">Tests complétés</p>
+                                    <p class="stat-value">12</p>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon stat-icon-green">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="stat-info">
+                                    <p class="stat-label">Score moyen</p>
+                                    <p class="stat-value">76%</p>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon stat-icon-purple">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="stat-info">
+                                    <p class="stat-label">Temps d'étude</p>
+                                    <p class="stat-value">4h 32min</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Modules de cours -->
+                    <section class="modules-section">
+                        <h3 class="section-title">Modules de Physique</h3>
+
+                        <!-- Module 1: Optique géométrique -->
+                        <div class="module-card module-optics">
+                            <div class="module-header">
+                                <div class="module-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M12 16v-4M12 8h.01"></path>
+                                    </svg>
+                                </div>
+                                <div class="module-info">
+                                    <h4>Optique Géométrique</h4>
+                                    <p class="module-chapters">4 chapitres · 52 questions</p>
+                                </div>
+                                <div class="module-progress-circle">
+                                    <svg viewBox="0 0 36 36">
+                                        <path
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none" stroke="#e5e7eb" stroke-width="3" />
+                                        <path
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none" stroke="#3b82f6" stroke-width="3" stroke-dasharray="75, 100" />
+                                    </svg>
+                                    <span class="progress-text">75%</span>
+                                </div>
+                            </div>
+                            <div class="module-chapters-list">
+                                <div class="chapter-item completed">
+                                    <span class="chapter-icon">✓</span>
+                                    <span>Lois de Réflexion et Réfraction</span>
+                                    <span class="chapter-score">18/20</span>
+                                </div>
+                                <div class="chapter-item completed">
+                                    <span class="chapter-icon">✓</span>
+                                    <span>Lentilles Minces</span>
+                                    <span class="chapter-score">16/20</span>
+                                </div>
+                                <div class="chapter-item completed">
+                                    <span class="chapter-icon">✓</span>
+                                    <span>Miroirs Sphériques</span>
+                                    <span class="chapter-score">19/20</span>
+                                </div>
+                                <div class="chapter-item">
+                                    <span class="chapter-icon">○</span>
+                                    <span>Fibres Optiques et Applications</span>
+                                    <button class="btn-start" data-module="optique"
+                                        data-chapter="general">Commencer</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Module 2: Électrostatique -->
+                        <div class="module-card module-electrostatics">
+                            <div class="module-header">
+                                <div class="module-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                    </svg>
+                                </div>
+                                <div class="module-info">
+                                    <h4>Électrostatique</h4>
+                                    <p class="module-chapters">5 chapitres · 68 questions</p>
+                                </div>
+                                <div class="module-progress-circle">
+                                    <svg viewBox="0 0 36 36">
+                                        <path
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none" stroke="#e5e7eb" stroke-width="3" />
+                                        <path
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="40, 100" />
+                                    </svg>
+                                    <span class="progress-text">40%</span>
+                                </div>
+                            </div>
+                            <div class="module-chapters-list">
+                                <div class="chapter-item completed">
+                                    <span class="chapter-icon">✓</span>
+                                    <span>Charge Électrique et Loi de Coulomb</span>
+                                    <span class="chapter-score">17/20</span>
+                                </div>
+                                <div class="chapter-item completed">
+                                    <span class="chapter-icon">✓</span>
+                                    <span>Champ Électrique</span>
+                                    <span class="chapter-score">15/20</span>
+                                </div>
+                                <div class="chapter-item">
+                                    <span class="chapter-icon">○</span>
+                                    <span>Potentiel Électrique</span>
+                                    <button class="btn-start" data-module="electrostatique"
+                                        data-chapter="coulomb">Commencer</button>
+                                </div>
+                                <div class="chapter-item locked">
+                                    <span class="chapter-icon">🔒</span>
+                                    <span>Théorème de Gauss</span>
+                                </div>
+                                <div class="chapter-item locked">
+                                    <span class="chapter-icon">🔒</span>
+                                    <span>Conducteurs et Condensateurs</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Module 3: Électrocinétique -->
+                        <div class="module-card module-electrokinetics">
+                            <div class="module-header">
+                                <div class="module-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="module-info">
+                                    <h4>Électrocinétique</h4>
+                                    <p class="module-chapters">5 chapitres · 72 questions</p>
+                                </div>
+                                <div class="module-progress-circle">
+                                    <svg viewBox="0 0 36 36">
+                                        <path
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none" stroke="#e5e7eb" stroke-width="3" />
+                                        <path
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="20, 100" />
+                                    </svg>
+                                    <span class="progress-text">20%</span>
+                                </div>
+                            </div>
+                            <div class="module-chapters-list collapsed">
+                                <div class="chapter-item completed">
+                                    <span class="chapter-icon">✓</span>
+                                    <span>Courant Électrique et Loi d'Ohm</span>
+                                    <span class="chapter-score">14/20</span>
+                                    <button class="btn-start" data-module="electrocinetique"
+                                        data-chapter="general">Commencer</button>
+                                </div>
+                                <button class="btn-show-more">Afficher 4 chapitres...</button>
+                            </div>
+                        </div>
+
+                        <!-- Module 4: Magnétisme -->
+                        <div class="module-card module-magnetism">
+                            <div class="module-header">
+                                <div class="module-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M6 9a6 6 0 0 1 12 0c0 8-6 13-6 13s-6-5-6-13z"></path>
+                                        <circle cx="12" cy="9" r="2"></circle>
+                                    </svg>
+                                </div>
+                                <div class="module-info">
+                                    <h4>Magnétostatique</h4>
+                                    <p class="module-chapters">5 chapitres · 64 questions</p>
+                                </div>
+                                <div class="module-progress-circle">
+                                    <svg viewBox="0 0 36 36">
+                                        <path
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none" stroke="#e5e7eb" stroke-width="3" />
+                                        <path
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none" stroke="#8b5cf6" stroke-width="3" stroke-dasharray="0, 100" />
+                                    </svg>
+                                    <span class="progress-text">0%</span>
+                                </div>
+                            </div>
+                            <div class="module-chapters-list collapsed">
+                                <div class="chapter-item">
+                                    <span class="chapter-icon">○</span>
+                                    <span>Champ Magnétique</span>
+                                    <button class="btn-start" data-module="magnetisme"
+                                        data-chapter="forces">Commencer</button>
+                                </div>
+                                <button class="btn-show-more">Afficher 4 chapitres...</button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <!-- Tests à venir -->
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-title">Tests Recommandés</h3>
+                        <div class="upcoming-tests">
+                            <div class="upcoming-test">
+                                <div class="test-badge badge-blue">Optique</div>
+                                <p class="test-name">Fibres Optiques</p>
+                                <p class="test-info">15 questions · 20 min</p>
+                            </div>
+                            <div class="upcoming-test">
+                                <div class="test-badge badge-yellow">Électrostat.</div>
+                                <p class="test-name">Potentiel Électrique</p>
+                                <p class="test-info">18 questions · 25 min</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activité récente -->
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-title">Activité Récente</h3>
+                        <div class="activity-feed">
+                            <div class="activity-item">
+                                <div class="activity-dot dot-green"></div>
+                                <div>
+                                    <p class="activity-text">Test complété: <strong>Miroirs Sphériques</strong></p>
+                                    <p class="activity-time">Il y a 2 heures</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-dot dot-blue"></div>
+                                <div>
+                                    <p class="activity-text">Score amélioré: <strong>Champ Électrique</strong></p>
+                                    <p class="activity-time">Hier</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script src="auth.js"></script>
+</body>
+
+</html>
