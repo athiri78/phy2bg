@@ -21,7 +21,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         btn.style.opacity = '0.8';
 
                         setTimeout(() => {
-                            window.location.href = result.redirect;
+                            // Add auth param for file:// protocol compatibility
+                            const redirectUrl = result.redirect + (result.redirect.includes('admin') ? '?auth=admin' : '');
+                            window.location.href = redirectUrl;
                         }, 500);
                     } else {
                         alert('❌ ' + result.message);

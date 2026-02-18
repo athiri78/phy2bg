@@ -15,6 +15,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Initialization ---
     renderAllResources();
 
+    // --- Admin-only: hide upload button for non-admin ---
+    if (typeof isAdmin === 'function' && !isAdmin()) {
+        document.getElementById('uploadTriggerBtn').style.display = 'none';
+    }
+
     // --- Tab Switching ---
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -95,18 +100,35 @@ document.addEventListener('DOMContentLoaded', function () {
             category: category,
             module: module,
             fileName: file ? file.name : `${title.replace(/\s+/g, '_')}.pdf`,
-            size: file ? formatBytes(file.size) : '1.2 MB', // Simulated size if no file
+            size: file ? formatBytes(file.size) : '1.2 MB',
             date: new Date().toLocaleDateString('fr-FR'),
             downloads: 0
         };
 
-        resources.push(newResource);
-        saveResources();
-        renderAllResources();
-        closeModal();
-
-        // Show success animation/toast (simple alert for now)
-        alert('✅ Document ajouté avec succès !');
+        if (file) {
+            // Read file and store as base64 in localStorage
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                try {
+                    localStorage.setItem('file_' + newResource.id, event.target.result);
+                } catch (err) {
+                    alert('⚠️ Le fichier est trop volumineux pour le stockage local (max ~5 MB).');
+                    return;
+                }
+                resources.push(newResource);
+                saveResources();
+                renderAllResources();
+                closeModal();
+                alert('✅ Document ajouté avec succès !');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            resources.push(newResource);
+            saveResources();
+            renderAllResources();
+            closeModal();
+            alert('✅ Document ajouté (sans fichier joint).');
+        }
     });
 
     // --- Rendering Logic ---
@@ -154,16 +176,16 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
             <div class="meta-info">
                 <span>${res.date} • ${res.size}</span>
-                <button class="btn-download" title="Télécharger" onclick="downloadResource('${res.id}')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                </button>
-                <button class="btn-download" title="Supprimer (Demo)" style="color: #ef4444; margin-left: 5px;" onclick="deleteResource('${res.id}')">
-                   &times;
-                </button>
+                <div>
+                    <button class="btn-download" title="Télécharger" onclick="downloadResource('${res.id}')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
+                    ${(typeof isAdmin === 'function' && isAdmin()) ? `<button class="btn-download" title="Supprimer" style="color: #ef4444; margin-left: 5px;" onclick="deleteResource('${res.id}')">&times;</button>` : ''}
+                </div>
             </div>
         `;
         return div;
@@ -220,8 +242,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Expose functions required for HTML inline calls
     window.downloadResource = function (id) {
-        alert(`📥 Simulation du téléchargement... \nFichier ID: ${id}`);
-        // In real app: window.open(url, '_blank');
+        const fileData = localStorage.getItem('file_' + id);
+        const resource = resources.find(r => r.id === id);
+
+        if (fileData) {
+            // Create a real download from stored file data
+            const link = document.createElement('a');
+            link.href = fileData;
+            link.download = resource ? resource.fileName : 'document.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Update download count
+            if (resource) {
+                resource.downloads = (resource.downloads || 0) + 1;
+                saveResources();
+            }
+        } else {
+            alert('📁 Ce document est un exemple de démonstration.\nAucun fichier réel n\'est associé.');
+        }
     };
 
     window.deleteResource = function (id) {
@@ -229,6 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const idx = resources.findIndex(r => r.id === id);
             if (idx > -1) {
                 resources.splice(idx, 1);
+                localStorage.removeItem('file_' + id);
                 saveResources();
                 renderAllResources();
             }

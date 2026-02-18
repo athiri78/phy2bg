@@ -5,6 +5,16 @@ body {
     background: #f3f4f6;
 }
 
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.resources-main {
+    padding: 1rem 0 3rem;
+}
+
 /* Navbar specific overrides */
 .navbar {
     background: white;
@@ -12,6 +22,27 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-left .logo {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.nav-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .nav-container {
@@ -51,6 +82,11 @@ body {
     color: var(--text-secondary);
     font-weight: 500;
     font-size: 0.9rem;
+}
+
+.btn-back svg {
+    width: 18px;
+    height: 18px;
 }
 
 .btn-back:hover {
@@ -212,6 +248,7 @@ body {
     line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -258,10 +295,16 @@ body {
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(4px);
+    /* Override styles.css defaults */
+    opacity: 1;
+    visibility: visible;
+    transition: none;
 }
 
 .hidden {
-    display: none;
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
 
 .modal-content {
@@ -270,7 +313,11 @@ body {
     max-width: 500px;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    animation: slideUp 0.3s ease;
+    animation: slideUp 0.3s ease forwards;
+    /* Override styles.css defaults */
+    transform: translateY(0);
+    display: flex;
+    flex-direction: column;
 }
 
 .modal-header {

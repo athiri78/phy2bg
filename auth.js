@@ -6,6 +6,13 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('admin_password', 'admin123');
     }
 
+    // Check URL params for auth fallback (file:// protocol fix)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('auth') === 'admin') {
+        localStorage.setItem('user_role', 'admin');
+        localStorage.setItem('user_name', 'Pr. Abdellah Tahiri');
+    }
+
     updateNavigation();
 
     // Si on est sur la page admin, vérifier les droits
