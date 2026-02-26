@@ -111,13 +111,20 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // File size check (max 10 MB)
+        const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
+        if (file.size > MAX_SIZE) {
+            alert(`⚠️ Le fichier est trop volumineux (${formatBytes(file.size)}).\nTaille maximale autorisée : 10 MB.\n\nConseil : compressez votre PDF avec ilovepdf.com`);
+            return;
+        }
+
         // Disable submit and show progress
         submitBtn.disabled = true;
         submitBtn.textContent = 'Upload en cours...';
         progressContainer.classList.remove('hidden');
         progressFill.style.width = '0%';
         progressPercent.textContent = '0%';
-        progressText.textContent = 'Upload en cours...';
+        progressText.textContent = `Préparation de l'upload (${formatBytes(file.size)})...`;
 
         // Create unique filename
         const fileId = Date.now().toString();
@@ -125,23 +132,48 @@ document.addEventListener('DOMContentLoaded', function () {
         const fileRef = storageRef.child(fileName);
 
         // Upload with progress tracking
+        let uploadStartTime = Date.now();
         const uploadTask = fileRef.put(file);
+
+        // Timeout: if no progress after 30 seconds, alert the user
+        let lastBytesTransferred = 0;
+        let stuckTimer = setTimeout(() => {
+            if (lastBytesTransferred === 0) {
+                uploadTask.cancel();
+                progressText.textContent = '❌ Upload bloqué — vérifiez Firebase Storage';
+                progressFill.style.width = '0%';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Publier le document';
+                alert('⚠️ L\'upload semble bloqué.\n\nCauses possibles :\n1. Firebase Storage n\'est pas activé\n2. Les règles de sécurité Storage bloquent l\'écriture\n3. Le bucket Storage n\'existe pas encore\n\n→ Allez sur console.firebase.google.com → Storage → Vérifiez l\'activation et les Rules.');
+            }
+        }, 30000);
 
         uploadTask.on('state_changed',
             // Progress
             (snapshot) => {
+                lastBytesTransferred = snapshot.bytesTransferred;
+                clearTimeout(stuckTimer); // Reset timeout on progress
+
                 const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
                 progressFill.style.width = progress + '%';
                 progressPercent.textContent = progress + '%';
 
+                // Calculate speed and ETA
+                const elapsed = (Date.now() - uploadStartTime) / 1000; // seconds
+                const speed = snapshot.bytesTransferred / elapsed; // bytes/sec
+                const remaining = (snapshot.totalBytes - snapshot.bytesTransferred) / speed;
+
                 if (progress < 100) {
-                    progressText.textContent = `Upload en cours... (${formatBytes(snapshot.bytesTransferred)} / ${formatBytes(snapshot.totalBytes)})`;
+                    const speedText = formatBytes(speed) + '/s';
+                    const etaText = remaining > 60 ? `${Math.round(remaining / 60)} min` : `${Math.round(remaining)} sec`;
+                    progressText.textContent = `${formatBytes(snapshot.bytesTransferred)} / ${formatBytes(snapshot.totalBytes)} — ${speedText} — ${etaText} restant`;
                 } else {
                     progressText.textContent = 'Finalisation...';
                 }
             },
             // Error
             (error) => {
+                clearTimeout(stuckTimer);
                 console.error('Upload error:', error);
                 progressText.textContent = '❌ Erreur lors de l\'upload';
                 progressFill.style.width = '0%';
@@ -149,9 +181,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 submitBtn.textContent = 'Publier le document';
 
                 if (error.code === 'storage/unauthorized') {
-                    alert('⛔ Erreur d\'autorisation Firebase.\nVérifiez les règles de sécurité Storage.');
+                    alert('⛔ Erreur d\'autorisation Firebase.\n\nAllez sur console.firebase.google.com → Storage → Rules\nEt remplacez les règles par :\n\nrules_version = \'2\';\nservice firebase.storage {\n  match /b/{bucket}/o {\n    match /resources/{allPaths=**} {\n      allow read, write: if true;\n    }\n  }\n}');
+                } else if (error.code === 'storage/canceled') {
+                    alert('Upload annulé.');
                 } else {
-                    alert('❌ Erreur lors de l\'upload : ' + error.message);
+                    alert('❌ Erreur : ' + error.code + '\n' + error.message);
                 }
             },
             // Complete
