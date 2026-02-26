@@ -1,8 +1,9 @@
-// Resources Page JavaScript
+// Resources Page JavaScript — Firebase Storage + Firestore Edition
 document.addEventListener('DOMContentLoaded', function () {
 
-    // --- State Management ---
-    const resources = JSON.parse(localStorage.getItem('resources_db')) || getDefaultResources();
+    // --- Firebase References ---
+    const storageRef = storage.ref('resources');
+    const dbRef = db.collection('resources');
 
     // --- Elements ---
     const tabs = document.querySelectorAll('.tab-btn');
@@ -11,9 +12,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('uploadForm');
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const progressContainer = document.getElementById('uploadProgressContainer');
+    const progressFill = document.getElementById('uploadProgressFill');
+    const progressPercent = document.getElementById('uploadProgressPercent');
+    const progressText = document.getElementById('uploadProgressText');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // --- State ---
+    let resources = [];
 
     // --- Initialization ---
-    renderAllResources();
+    loadResources();
 
     // --- Admin-only: hide upload button for non-admin ---
     if (typeof isAdmin === 'function' && !isAdmin()) {
@@ -23,11 +33,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Tab Switching ---
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            // Update Tab UI
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
 
-            // Show Content
             const target = tab.dataset.tab;
             sections.forEach(s => {
                 s.classList.remove('active');
@@ -48,9 +56,13 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.classList.add('hidden');
         form.reset();
         document.getElementById('fileNamePreview').textContent = '';
+        progressContainer.classList.add('hidden');
+        progressFill.style.width = '0%';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Publier le document';
     }
 
-    // --- File Upload Simulation ---
+    // --- File Upload ---
     dropZone.addEventListener('click', () => fileInput.click());
 
     fileInput.addEventListener('change', (e) => {
@@ -74,13 +86,13 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         dropZone.classList.remove('dragover');
         if (e.dataTransfer.files.length > 0) {
-            fileInput.files = e.dataTransfer.files; // Note: works in modern browsers
+            fileInput.files = e.dataTransfer.files;
             document.getElementById('fileNamePreview').textContent =
                 `📄 ${e.dataTransfer.files[0].name}`;
         }
     });
 
-    // --- Form Submission ---
+    // --- Form Submission (Firebase Upload) ---
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -94,42 +106,121 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const newResource = {
-            id: Date.now().toString(),
-            title: title,
-            category: category,
-            module: module,
-            fileName: file ? file.name : `${title.replace(/\s+/g, '_')}.pdf`,
-            size: file ? formatBytes(file.size) : '1.2 MB',
-            date: new Date().toLocaleDateString('fr-FR'),
-            downloads: 0
-        };
-
-        if (file) {
-            // Read file and store as base64 in localStorage
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                try {
-                    localStorage.setItem('file_' + newResource.id, event.target.result);
-                } catch (err) {
-                    alert('⚠️ Le fichier est trop volumineux pour le stockage local (max ~5 MB).');
-                    return;
-                }
-                resources.push(newResource);
-                saveResources();
-                renderAllResources();
-                closeModal();
-                alert('✅ Document ajouté avec succès !');
-            };
-            reader.readAsDataURL(file);
-        } else {
-            resources.push(newResource);
-            saveResources();
-            renderAllResources();
-            closeModal();
-            alert('✅ Document ajouté (sans fichier joint).');
+        if (!file) {
+            alert('⚠️ Veuillez sélectionner un fichier PDF.');
+            return;
         }
+
+        // Disable submit and show progress
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Upload en cours...';
+        progressContainer.classList.remove('hidden');
+        progressFill.style.width = '0%';
+        progressPercent.textContent = '0%';
+        progressText.textContent = 'Upload en cours...';
+
+        // Create unique filename
+        const fileId = Date.now().toString();
+        const fileName = `${fileId}_${file.name}`;
+        const fileRef = storageRef.child(fileName);
+
+        // Upload with progress tracking
+        const uploadTask = fileRef.put(file);
+
+        uploadTask.on('state_changed',
+            // Progress
+            (snapshot) => {
+                const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                progressFill.style.width = progress + '%';
+                progressPercent.textContent = progress + '%';
+
+                if (progress < 100) {
+                    progressText.textContent = `Upload en cours... (${formatBytes(snapshot.bytesTransferred)} / ${formatBytes(snapshot.totalBytes)})`;
+                } else {
+                    progressText.textContent = 'Finalisation...';
+                }
+            },
+            // Error
+            (error) => {
+                console.error('Upload error:', error);
+                progressText.textContent = '❌ Erreur lors de l\'upload';
+                progressFill.style.width = '0%';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Publier le document';
+
+                if (error.code === 'storage/unauthorized') {
+                    alert('⛔ Erreur d\'autorisation Firebase.\nVérifiez les règles de sécurité Storage.');
+                } else {
+                    alert('❌ Erreur lors de l\'upload : ' + error.message);
+                }
+            },
+            // Complete
+            async () => {
+                try {
+                    const downloadURL = await fileRef.getDownloadURL();
+
+                    // Save metadata to Firestore
+                    const docData = {
+                        title: title,
+                        category: category,
+                        module: module,
+                        fileName: file.name,
+                        storagePath: fileName,
+                        downloadURL: downloadURL,
+                        size: formatBytes(file.size),
+                        date: new Date().toLocaleDateString('fr-FR'),
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        downloads: 0
+                    };
+
+                    await dbRef.add(docData);
+
+                    progressText.textContent = '✅ Upload réussi !';
+                    progressFill.classList.add('success');
+
+                    // Reload resources and close modal after a brief delay
+                    setTimeout(() => {
+                        loadResources();
+                        closeModal();
+                        progressFill.classList.remove('success');
+                    }, 1000);
+
+                } catch (error) {
+                    console.error('Firestore save error:', error);
+                    alert('❌ Fichier uploadé mais erreur de sauvegarde des métadonnées : ' + error.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Publier le document';
+                }
+            }
+        );
     });
+
+    // --- Load Resources from Firestore ---
+    async function loadResources() {
+        loadingSpinner.style.display = 'flex';
+
+        try {
+            const snapshot = await dbRef.orderBy('createdAt', 'desc').get();
+            resources = [];
+
+            snapshot.forEach(doc => {
+                resources.push({ id: doc.id, ...doc.data() });
+            });
+
+            renderAllResources();
+        } catch (error) {
+            console.error('Error loading resources:', error);
+
+            // Fallback: check if Firebase is not configured
+            if (error.code === 'permission-denied' || error.message.includes('VOTRE_')) {
+                console.warn('Firebase non configuré. Affichage des données de démonstration.');
+                resources = getDefaultResources();
+                renderAllResources();
+            }
+        } finally {
+            loadingSpinner.style.display = 'none';
+        }
+    }
 
     // --- Rendering Logic ---
     function renderAllResources() {
@@ -192,14 +283,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Helpers ---
-    function saveResources() {
-        localStorage.setItem('resources_db', JSON.stringify(resources));
+    function formatBytes(bytes, decimals = 2) {
+        if (!+bytes) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
     }
 
     function getDefaultResources() {
         return [
             {
-                id: '1',
+                id: 'demo-1',
                 title: 'Chapitre 1 : Optique Géométrique - Principes de base',
                 category: 'cours',
                 module: 'Optique',
@@ -209,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 downloads: 120
             },
             {
-                id: '2',
+                id: 'demo-2',
                 title: 'Série TD N°1 : Réflexion et Réfraction',
                 category: 'td',
                 module: 'Optique',
@@ -219,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 downloads: 85
             },
             {
-                id: '3',
+                id: 'demo-3',
                 title: 'Examen Final 2024 - Session Normale',
                 category: 'examens',
                 module: 'Électrostatique',
@@ -231,48 +327,68 @@ document.addEventListener('DOMContentLoaded', function () {
         ];
     }
 
-    function formatBytes(bytes, decimals = 2) {
-        if (!+bytes) return '0 Bytes';
-        const k = 1024;
-        const dm = decimals < 0 ? 0 : decimals;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-    }
-
-    // Expose functions required for HTML inline calls
+    // --- Expose functions for inline HTML calls ---
     window.downloadResource = function (id) {
-        const fileData = localStorage.getItem('file_' + id);
         const resource = resources.find(r => r.id === id);
 
-        if (fileData) {
-            // Create a real download from stored file data
+        if (!resource) {
+            alert('❌ Ressource introuvable.');
+            return;
+        }
+
+        // Demo resources (no real file)
+        if (id.startsWith('demo-')) {
+            alert('📁 Ce document est un exemple de démonstration.\nAucun fichier réel n\'est associé.');
+            return;
+        }
+
+        // Firebase resource: use download URL
+        if (resource.downloadURL) {
+            // Increment download counter in Firestore
+            dbRef.doc(id).update({
+                downloads: firebase.firestore.FieldValue.increment(1)
+            }).catch(err => console.warn('Could not update download count:', err));
+
+            // Open the file in a new tab (triggers download for PDFs)
             const link = document.createElement('a');
-            link.href = fileData;
-            link.download = resource ? resource.fileName : 'document.pdf';
+            link.href = resource.downloadURL;
+            link.target = '_blank';
+            link.download = resource.fileName || 'document.pdf';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-
-            // Update download count
-            if (resource) {
-                resource.downloads = (resource.downloads || 0) + 1;
-                saveResources();
-            }
         } else {
-            alert('📁 Ce document est un exemple de démonstration.\nAucun fichier réel n\'est associé.');
+            alert('📁 Aucun fichier associé à cette ressource.');
         }
     };
 
-    window.deleteResource = function (id) {
-        if (confirm('Supprimer ce document ?')) {
-            const idx = resources.findIndex(r => r.id === id);
-            if (idx > -1) {
-                resources.splice(idx, 1);
-                localStorage.removeItem('file_' + id);
-                saveResources();
-                renderAllResources();
-            }
+    window.deleteResource = async function (id) {
+        if (!confirm('Supprimer ce document ?')) return;
+
+        const resource = resources.find(r => r.id === id);
+
+        // Demo resources: just remove from display
+        if (id.startsWith('demo-')) {
+            resources = resources.filter(r => r.id !== id);
+            renderAllResources();
+            return;
         }
-    }
+
+        try {
+            // Delete file from Firebase Storage
+            if (resource && resource.storagePath) {
+                await storageRef.child(resource.storagePath).delete();
+            }
+
+            // Delete metadata from Firestore
+            await dbRef.doc(id).delete();
+
+            // Reload
+            await loadResources();
+            alert('✅ Document supprimé.');
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert('❌ Erreur lors de la suppression : ' + error.message);
+        }
+    };
 });

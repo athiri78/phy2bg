@@ -116,13 +116,30 @@
                                 <div id="fileNamePreview" class="file-preview"></div>
                             </div>
 
+                            <!-- Progress Bar -->
+                            <div id="uploadProgressContainer" class="upload-progress-container hidden">
+                                <div class="upload-progress-label">
+                                    <span id="uploadProgressText">Upload en cours...</span>
+                                    <span id="uploadProgressPercent">0%</span>
+                                </div>
+                                <div class="upload-progress-bar">
+                                    <div id="uploadProgressFill" class="upload-progress-fill"></div>
+                                </div>
+                            </div>
+
                             <div class="modal-actions">
                                 <button type="button" class="btn-secondary" id="cancelBtn">Annuler</button>
-                                <button type="submit" class="btn-primary">Publier le document</button>
+                                <button type="submit" class="btn-primary" id="submitBtn">Publier le document</button>
                             </div>
                         </form>
                     </div>
                 </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Chargement des ressources...</p>
             </div>
 
             <!-- Content Grid : Cours -->
@@ -169,6 +186,33 @@
 
         </div>
     </main>
+
+    <!-- Firebase SDK (v9 compat mode via CDN) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script>
+        // ============================================================
+        // ⚠️ REMPLACEZ CES VALEURS par celles de votre projet Firebase
+        // Consultez : https://console.firebase.google.com → Paramètres
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCEIffT14KZhzo0xGuupxPIU9B5R55IwSs",
+            authDomain: "phy2bg.firebaseapp.com",
+            projectId: "phy2bg",
+            storageBucket: "phy2bg.firebasestorage.app",
+            messagingSenderId: "818822605453",
+            appId: "1:818822605453:web:9ad9261165fe80885790c4",
+            measurementId: "G-E91QEY4LDD"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+        const db = firebase.firestore();
+    </script>
 
     <script src="auth.js"></script>
     <script src="resources.js"></script>
