@@ -135,24 +135,32 @@ document.addEventListener('DOMContentLoaded', function () {
         let uploadStartTime = Date.now();
         const uploadTask = fileRef.put(file);
 
-        // Timeout: if no progress after 30 seconds, alert the user
+        // Timeout: if no progress after some time, alert the user
         let lastBytesTransferred = 0;
-        let stuckTimer = setTimeout(() => {
-            if (lastBytesTransferred === 0) {
+        let stuckTimer;
+
+        const checkStuck = () => {
+            clearTimeout(stuckTimer);
+            stuckTimer = setTimeout(() => {
                 uploadTask.cancel();
-                progressText.textContent = '❌ Upload bloqué — vérifiez Firebase Storage';
+                progressText.textContent = '❌ Upload bloqué — Firebase Storage non configuré ?';
                 progressFill.style.width = '0%';
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Publier le document';
-                alert('⚠️ L\'upload semble bloqué.\n\nCauses possibles :\n1. Firebase Storage n\'est pas activé\n2. Les règles de sécurité Storage bloquent l\'écriture\n3. Le bucket Storage n\'existe pas encore\n\n→ Allez sur console.firebase.google.com → Storage → Vérifiez l\'activation et les Rules.');
-            }
-        }, 30000);
+                alert('⚠️ L\'upload semble bloqué à 0%.\n\nCauses fréquentes :\n1. La base Firebase Storage n\'est pas activée (Allez sur console.firebase.google.com → Storage → Commencer).\n2. Les règles de sécurité sont sur "false" (Vous devez mettre allow read, write: if true;).\n3. Adblocker ou extension empêchant l\'upload.\n\nVeuillez vérifier vos paramètres Firebase Storage.');
+            }, 10000); // 10 secondes pour un retour rapide à l'utilisateur
+        };
+
+        checkStuck();
 
         uploadTask.on('state_changed',
             // Progress
             (snapshot) => {
-                lastBytesTransferred = snapshot.bytesTransferred;
-                clearTimeout(stuckTimer); // Reset timeout on progress
+                // Seulement réinitialiser le timer si de l'avancement est fait
+                if (snapshot.bytesTransferred > lastBytesTransferred || snapshot.bytesTransferred === snapshot.totalBytes) {
+                    lastBytesTransferred = snapshot.bytesTransferred;
+                    checkStuck();
+                }
 
                 const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
                 progressFill.style.width = progress + '%';
@@ -160,11 +168,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Calculate speed and ETA
                 const elapsed = (Date.now() - uploadStartTime) / 1000; // seconds
-                const speed = snapshot.bytesTransferred / elapsed; // bytes/sec
-                const remaining = (snapshot.totalBytes - snapshot.bytesTransferred) / speed;
+                // Éviter la division par zéro
+                const speed = elapsed > 0 ? (snapshot.bytesTransferred / elapsed) : 0;
+                const remaining = speed > 0 ? ((snapshot.totalBytes - snapshot.bytesTransferred) / speed) : 0;
 
                 if (progress < 100) {
-                    const speedText = formatBytes(speed) + '/s';
+                    const speedText = speed > 0 ? formatBytes(speed) + '/s' : '0 Bytes/s';
                     const etaText = remaining > 60 ? `${Math.round(remaining / 60)} min` : `${Math.round(remaining)} sec`;
                     progressText.textContent = `${formatBytes(snapshot.bytesTransferred)} / ${formatBytes(snapshot.totalBytes)} — ${speedText} — ${etaText} restant`;
                 } else {
