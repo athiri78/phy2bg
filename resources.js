@@ -1,14 +1,40 @@
-// Resources Page JavaScript — Firebase Storage + Firestore Edition
+// Resources Page JavaScript — GitHub API Edition
+// Dépôt GitHub : athiri78/phy2bg
+// Les PDFs sont stockés dans : pdfs/
+// La liste des ressources est stockée dans : resources.json
+
 document.addEventListener('DOMContentLoaded', function () {
 
-    // --- Firebase References ---
-    const storageRef = storage.ref('resources');
-    const dbRef = db.collection('resources');
+    // ===================================================
+    // CONFIGURATION GITHUB
+    // ===================================================
+    const GITHUB_OWNER = 'athiri78';
+    const GITHUB_REPO = 'phy2bg';
+    const GITHUB_BRANCH = 'main';  // ou 'master' selon votre repo
+    const PDF_FOLDER = 'pdfs';
+    const JSON_FILE = 'resources.json';
 
-    // --- Elements ---
+    // URL publique de base pour accéder aux PDFs via GitHub Pages
+    const BASE_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}`;
+
+    // ===================================================
+    // TOKEN GITHUB (stocké dans localStorage)
+    // ===================================================
+    function getToken() {
+        return localStorage.getItem('gh_token') || '';
+    }
+
+    function saveToken(token) {
+        localStorage.setItem('gh_token', token.trim());
+    }
+
+    // ===================================================
+    // ÉLÉMENTS DOM
+    // ===================================================
     const tabs = document.querySelectorAll('.tab-btn');
     const sections = document.querySelectorAll('.content-section');
     const modal = document.getElementById('uploadModal');
+    const tokenModal = document.getElementById('tokenModal');
     const form = document.getElementById('uploadForm');
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
@@ -19,23 +45,26 @@ document.addEventListener('DOMContentLoaded', function () {
     const progressText = document.getElementById('uploadProgressText');
     const submitBtn = document.getElementById('submitBtn');
 
-    // --- State ---
     let resources = [];
 
-    // --- Initialization ---
+    // ===================================================
+    // INITIALISATION
+    // ===================================================
     loadResources();
 
-    // --- Admin-only: hide upload button for non-admin ---
+    // Masquer le bouton upload pour les non-admins
     if (typeof isAdmin === 'function' && !isAdmin()) {
-        document.getElementById('uploadTriggerBtn').style.display = 'none';
+        const btn = document.getElementById('uploadTriggerBtn');
+        if (btn) btn.style.display = 'none';
     }
 
-    // --- Tab Switching ---
+    // ===================================================
+    // ONGLETS (TABS)
+    // ===================================================
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
-
             const target = tab.dataset.tab;
             sections.forEach(s => {
                 s.classList.remove('active');
@@ -44,9 +73,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // --- Modal Handling ---
+    // ===================================================
+    // MODALE UPLOAD
+    // ===================================================
     document.getElementById('uploadTriggerBtn').addEventListener('click', () => {
-        modal.classList.remove('hidden');
+        // Vérifier si le token est configuré
+        if (!getToken()) {
+            tokenModal.classList.remove('hidden');
+        } else {
+            modal.classList.remove('hidden');
+        }
     });
 
     document.getElementById('closeModalBtn').addEventListener('click', closeModal);
@@ -62,7 +98,30 @@ document.addEventListener('DOMContentLoaded', function () {
         submitBtn.textContent = 'Publier le document';
     }
 
-    // --- File Upload ---
+    // ===================================================
+    // MODALE TOKEN GITHUB
+    // ===================================================
+    document.getElementById('closeTokenModalBtn').addEventListener('click', () => {
+        tokenModal.classList.add('hidden');
+    });
+    document.getElementById('cancelTokenBtn').addEventListener('click', () => {
+        tokenModal.classList.add('hidden');
+    });
+    document.getElementById('saveTokenBtn').addEventListener('click', () => {
+        const token = document.getElementById('githubTokenInput').value.trim();
+        if (!token || !token.startsWith('ghp_')) {
+            alert('⚠️ Token invalide. Il doit commencer par "ghp_".\nVérifiez que vous avez copié le token complet depuis GitHub.');
+            return;
+        }
+        saveToken(token);
+        tokenModal.classList.add('hidden');
+        modal.classList.remove('hidden');
+        document.getElementById('githubTokenInput').value = '';
+    });
+
+    // ===================================================
+    // SÉLECTION DE FICHIER (click et drag & drop)
+    // ===================================================
     dropZone.addEventListener('click', () => fileInput.click());
 
     fileInput.addEventListener('change', (e) => {
@@ -72,7 +131,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Drag & Drop Visuals
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropZone.classList.add('dragover');
@@ -88,184 +146,232 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.dataTransfer.files.length > 0) {
             fileInput.files = e.dataTransfer.files;
             document.getElementById('fileNamePreview').textContent =
-                `📄 ${e.dataTransfer.files[0].name}`;
+                `📄 ${e.dataTransfer.files[0].name} (${formatBytes(e.dataTransfer.files[0].size)})`;
         }
     });
 
-    // --- Form Submission (Firebase Upload) ---
-    form.addEventListener('submit', (e) => {
+    // ===================================================
+    // SOUMISSION DU FORMULAIRE — UPLOAD VIA GITHUB API
+    // ===================================================
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const title = document.getElementById('docTitle').value;
+        const title = document.getElementById('docTitle').value.trim();
         const category = document.getElementById('docCategory').value;
         const module = document.getElementById('docModule').value;
         const file = fileInput.files[0];
-
-        if (!title || !category || !module) {
-            alert('Veuillez remplir tous les champs obligatoires.');
-            return;
-        }
 
         if (!file) {
             alert('⚠️ Veuillez sélectionner un fichier PDF.');
             return;
         }
 
-        // File size check (max 10 MB)
-        const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
+        // Vérification taille (max 25 MB — limite GitHub API)
+        const MAX_SIZE = 25 * 1024 * 1024;
         if (file.size > MAX_SIZE) {
-            alert(`⚠️ Le fichier est trop volumineux (${formatBytes(file.size)}).\nTaille maximale autorisée : 10 MB.\n\nConseil : compressez votre PDF avec ilovepdf.com`);
+            alert(`⚠️ Fichier trop volumineux (${formatBytes(file.size)}).\nLimite GitHub : 25 MB.`);
             return;
         }
 
-        // Disable submit and show progress
+        const token = getToken();
+        if (!token) {
+            alert('⚠️ Aucun token GitHub configuré. Cliquez sur Annuler et réessayez.');
+            return;
+        }
+
+        // UI — début de l'upload
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Upload en cours...';
+        submitBtn.textContent = 'Publication en cours...';
         progressContainer.classList.remove('hidden');
-        progressFill.style.width = '0%';
-        progressPercent.textContent = '0%';
-        progressText.textContent = `Préparation de l'upload (${formatBytes(file.size)})...`;
+        progressFill.style.width = '10%';
+        progressPercent.textContent = '10%';
+        progressText.textContent = 'Lecture du fichier...';
 
-        // Create unique filename
-        const fileId = Date.now().toString();
-        const fileName = `${fileId}_${file.name}`;
-        const fileRef = storageRef.child(fileName);
+        try {
+            // Étape 1 : Lire le fichier en Base64
+            const base64Content = await fileToBase64(file);
+            progressFill.style.width = '30%';
+            progressPercent.textContent = '30%';
+            progressText.textContent = 'Envoi vers GitHub...';
 
-        // Upload with progress tracking
-        let uploadStartTime = Date.now();
-        const uploadTask = fileRef.put(file);
+            // Nom de fichier unique (timestamp + nom original nettoyé)
+            const safeFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+            const filePath = `${PDF_FOLDER}/${safeFileName}`;
 
-        // Timeout: if no progress after some time, alert the user
-        let lastBytesTransferred = 0;
-        let stuckTimer;
+            // Étape 2 : Upload du PDF dans le repo GitHub
+            const uploadResponse = await githubPut(
+                `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`,
+                {
+                    message: `Ajout ressource : ${title}`,
+                    content: base64Content,
+                    branch: GITHUB_BRANCH
+                },
+                token
+            );
 
-        const checkStuck = () => {
-            clearTimeout(stuckTimer);
-            stuckTimer = setTimeout(() => {
-                uploadTask.cancel();
-                progressText.textContent = '❌ Upload bloqué — Firebase Storage non configuré ?';
-                progressFill.style.width = '0%';
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Publier le document';
-                alert('⚠️ L\'upload semble bloqué à 0%.\n\nCauses fréquentes :\n1. La base Firebase Storage n\'est pas activée (Allez sur console.firebase.google.com → Storage → Commencer).\n2. Les règles de sécurité sont sur "false" (Vous devez mettre allow read, write: if true;).\n3. Adblocker ou extension empêchant l\'upload.\n\nVeuillez vérifier vos paramètres Firebase Storage.');
-            }, 10000); // 10 secondes pour un retour rapide à l'utilisateur
-        };
-
-        checkStuck();
-
-        uploadTask.on('state_changed',
-            // Progress
-            (snapshot) => {
-                // Seulement réinitialiser le timer si de l'avancement est fait
-                if (snapshot.bytesTransferred > lastBytesTransferred || snapshot.bytesTransferred === snapshot.totalBytes) {
-                    lastBytesTransferred = snapshot.bytesTransferred;
-                    checkStuck();
-                }
-
-                const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                progressFill.style.width = progress + '%';
-                progressPercent.textContent = progress + '%';
-
-                // Calculate speed and ETA
-                const elapsed = (Date.now() - uploadStartTime) / 1000; // seconds
-                // Éviter la division par zéro
-                const speed = elapsed > 0 ? (snapshot.bytesTransferred / elapsed) : 0;
-                const remaining = speed > 0 ? ((snapshot.totalBytes - snapshot.bytesTransferred) / speed) : 0;
-
-                if (progress < 100) {
-                    const speedText = speed > 0 ? formatBytes(speed) + '/s' : '0 Bytes/s';
-                    const etaText = remaining > 60 ? `${Math.round(remaining / 60)} min` : `${Math.round(remaining)} sec`;
-                    progressText.textContent = `${formatBytes(snapshot.bytesTransferred)} / ${formatBytes(snapshot.totalBytes)} — ${speedText} — ${etaText} restant`;
-                } else {
-                    progressText.textContent = 'Finalisation...';
-                }
-            },
-            // Error
-            (error) => {
-                clearTimeout(stuckTimer);
-                console.error('Upload error:', error);
-                progressText.textContent = '❌ Erreur lors de l\'upload';
-                progressFill.style.width = '0%';
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Publier le document';
-
-                if (error.code === 'storage/unauthorized') {
-                    alert('⛔ Erreur d\'autorisation Firebase.\n\nAllez sur console.firebase.google.com → Storage → Rules\nEt remplacez les règles par :\n\nrules_version = \'2\';\nservice firebase.storage {\n  match /b/{bucket}/o {\n    match /resources/{allPaths=**} {\n      allow read, write: if true;\n    }\n  }\n}');
-                } else if (error.code === 'storage/canceled') {
-                    alert('Upload annulé.');
-                } else {
-                    alert('❌ Erreur : ' + error.code + '\n' + error.message);
-                }
-            },
-            // Complete
-            async () => {
-                try {
-                    const downloadURL = await fileRef.getDownloadURL();
-
-                    // Save metadata to Firestore
-                    const docData = {
-                        title: title,
-                        category: category,
-                        module: module,
-                        fileName: file.name,
-                        storagePath: fileName,
-                        downloadURL: downloadURL,
-                        size: formatBytes(file.size),
-                        date: new Date().toLocaleDateString('fr-FR'),
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        downloads: 0
-                    };
-
-                    await dbRef.add(docData);
-
-                    progressText.textContent = '✅ Upload réussi !';
-                    progressFill.classList.add('success');
-
-                    // Reload resources and close modal after a brief delay
-                    setTimeout(() => {
-                        loadResources();
-                        closeModal();
-                        progressFill.classList.remove('success');
-                    }, 1000);
-
-                } catch (error) {
-                    console.error('Firestore save error:', error);
-                    alert('❌ Fichier uploadé mais erreur de sauvegarde des métadonnées : ' + error.message);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Publier le document';
-                }
+            if (!uploadResponse.ok) {
+                const err = await uploadResponse.json();
+                throw new Error(err.message || `Erreur ${uploadResponse.status}`);
             }
-        );
+
+            progressFill.style.width = '65%';
+            progressPercent.textContent = '65%';
+            progressText.textContent = 'Mise à jour de la liste des ressources...';
+
+            // URL publique du PDF (via GitHub Pages)
+            const pdfURL = `${BASE_URL}/${filePath}`;
+
+            // Étape 3 : Mettre à jour resources.json
+            const newEntry = {
+                id: Date.now().toString(),
+                title,
+                category,
+                module,
+                fileName: file.name,
+                filePath,
+                downloadURL: pdfURL,
+                size: formatBytes(file.size),
+                date: new Date().toLocaleDateString('fr-FR'),
+                downloads: 0
+            };
+
+            await updateResourcesJson(newEntry, token);
+
+            progressFill.style.width = '100%';
+            progressPercent.textContent = '100%';
+            progressText.textContent = '✅ Document publié avec succès !';
+            progressFill.classList.add('success');
+
+            setTimeout(() => {
+                loadResources();
+                closeModal();
+                progressFill.classList.remove('success');
+            }, 1200);
+
+        } catch (error) {
+            console.error('Upload error:', error);
+            progressFill.style.width = '0%';
+            progressText.textContent = '❌ Erreur lors de la publication';
+
+            if (error.message.includes('401') || error.message.includes('Bad credentials')) {
+                localStorage.removeItem('gh_token');
+                alert('⛔ Token GitHub invalide ou expiré.\n\nVotre token a été supprimé. Réessayez pour en entrer un nouveau.');
+            } else if (error.message.includes('404')) {
+                alert('❌ Dépôt GitHub introuvable.\n\nVérifiez que le repo "' + GITHUB_REPO + '" existe et que votre token a les droits "repo".');
+            } else if (error.message.includes('422')) {
+                alert('❌ Ce fichier existe déjà dans le dépôt.\nRenommez votre fichier et réessayez.');
+            } else {
+                alert('❌ Erreur : ' + error.message);
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Publier le document';
+        }
     });
 
-    // --- Load Resources from Firestore ---
+    // ===================================================
+    // CHARGER LES RESSOURCES depuis resources.json
+    // ===================================================
     async function loadResources() {
         loadingSpinner.style.display = 'flex';
 
         try {
-            const snapshot = await dbRef.orderBy('createdAt', 'desc').get();
-            resources = [];
+            // On ajoute un paramètre aléatoire pour éviter le cache navigateur
+            const res = await fetch(`${BASE_URL}/${JSON_FILE}?v=${Date.now()}`);
 
-            snapshot.forEach(doc => {
-                resources.push({ id: doc.id, ...doc.data() });
-            });
-
-            renderAllResources();
-        } catch (error) {
-            console.error('Error loading resources:', error);
-
-            // Fallback: check if Firebase is not configured
-            if (error.code === 'permission-denied' || error.message.includes('VOTRE_')) {
-                console.warn('Firebase non configuré. Affichage des données de démonstration.');
-                resources = getDefaultResources();
-                renderAllResources();
+            if (res.ok) {
+                const data = await res.json();
+                resources = data.resources || [];
+            } else if (res.status === 404) {
+                // Pas encore de fichier resources.json → liste vide
+                resources = [];
+            } else {
+                throw new Error('Erreur de chargement ' + res.status);
             }
+
+        } catch (error) {
+            console.warn('Impossible de charger resources.json:', error.message);
+            resources = [];
         } finally {
             loadingSpinner.style.display = 'none';
+            renderAllResources();
         }
     }
 
-    // --- Rendering Logic ---
+    // ===================================================
+    // METTRE À JOUR resources.json VIA GITHUB API
+    // ===================================================
+    async function updateResourcesJson(newEntry, token) {
+        // D'abord récupérer le SHA actuel du fichier (requis pour le mettre à jour)
+        let sha = null;
+        let existingResources = [];
+
+        const checkRes = await githubGet(
+            `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${JSON_FILE}?ref=${GITHUB_BRANCH}`,
+            token
+        );
+
+        if (checkRes.ok) {
+            const fileData = await checkRes.json();
+            sha = fileData.sha;
+            // Décoder le contenu existant
+            const decoded = atob(fileData.content.replace(/\n/g, ''));
+            const parsed = JSON.parse(decoded);
+            existingResources = parsed.resources || [];
+        }
+        // Si 404 → le fichier n'existe pas encore, on le crée
+
+        existingResources.push(newEntry);
+
+        const updatedJson = JSON.stringify({ resources: existingResources }, null, 2);
+        const encodedContent = btoa(unescape(encodeURIComponent(updatedJson)));
+
+        const body = {
+            message: `Mise à jour ressources : ${newEntry.title}`,
+            content: encodedContent,
+            branch: GITHUB_BRANCH
+        };
+        if (sha) body.sha = sha;
+
+        const updateRes = await githubPut(
+            `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${JSON_FILE}`,
+            body,
+            token
+        );
+
+        if (!updateRes.ok) {
+            const err = await updateRes.json();
+            throw new Error('Erreur mise à jour resources.json : ' + (err.message || updateRes.status));
+        }
+    }
+
+    // ===================================================
+    // HELPERS GITHUB API
+    // ===================================================
+    function githubPut(path, body, token) {
+        return fetch(`https://api.github.com${path}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/vnd.github+json'
+            },
+            body: JSON.stringify(body)
+        });
+    }
+
+    function githubGet(path, token) {
+        return fetch(`https://api.github.com${path}`, {
+            headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github+json'
+            }
+        });
+    }
+
+    // ===================================================
+    // AFFICHAGE DES RESSOURCES
+    // ===================================================
     function renderAllResources() {
         renderCategory('cours');
         renderCategory('td');
@@ -292,6 +398,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function createResourceCard(res) {
         const div = document.createElement('div');
         div.className = 'resource-card';
+        const isAdminUser = typeof isAdmin === 'function' && isAdmin();
+
         div.innerHTML = `
             <div class="card-top">
                 <div class="file-icon">
@@ -318,14 +426,117 @@ document.addEventListener('DOMContentLoaded', function () {
                             <line x1="12" y1="15" x2="12" y2="3"></line>
                         </svg>
                     </button>
-                    ${(typeof isAdmin === 'function' && isAdmin()) ? `<button class="btn-download" title="Supprimer" style="color: #ef4444; margin-left: 5px;" onclick="deleteResource('${res.id}')">&times;</button>` : ''}
+                    ${isAdminUser ? `<button class="btn-download" title="Supprimer" style="color:#ef4444; margin-left:5px;" onclick="deleteResource('${res.id}')">&#x2715;</button>` : ''}
                 </div>
             </div>
         `;
         return div;
     }
 
-    // --- Helpers ---
+    // ===================================================
+    // TÉLÉCHARGEMENT
+    // ===================================================
+    window.downloadResource = function (id) {
+        const resource = resources.find(r => r.id === id);
+        if (!resource || !resource.downloadURL) {
+            alert('❌ Fichier introuvable.');
+            return;
+        }
+        const link = document.createElement('a');
+        link.href = resource.downloadURL;
+        link.target = '_blank';
+        link.download = resource.fileName || 'document.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    // ===================================================
+    // SUPPRESSION
+    // ===================================================
+    window.deleteResource = async function (id) {
+        if (!confirm('🗑️ Supprimer ce document ?')) return;
+
+        const token = getToken();
+        if (!token) {
+            alert('⚠️ Token GitHub non configuré.');
+            return;
+        }
+
+        const resource = resources.find(r => r.id === id);
+        if (!resource) return;
+
+        try {
+            // Supprimer le PDF du repo
+            if (resource.filePath) {
+                // Récupérer le SHA du fichier PDF
+                const fileRes = await githubGet(
+                    `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${resource.filePath}?ref=${GITHUB_BRANCH}`,
+                    token
+                );
+                if (fileRes.ok) {
+                    const fileData = await fileRes.json();
+                    await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${resource.filePath}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/vnd.github+json'
+                        },
+                        body: JSON.stringify({
+                            message: `Suppression : ${resource.title}`,
+                            sha: fileData.sha,
+                            branch: GITHUB_BRANCH
+                        })
+                    });
+                }
+            }
+
+            // Mettre à jour resources.json sans cette entrée
+            const checkRes = await githubGet(
+                `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${JSON_FILE}?ref=${GITHUB_BRANCH}`,
+                token
+            );
+            if (checkRes.ok) {
+                const fileData = await checkRes.json();
+                const decoded = atob(fileData.content.replace(/\n/g, ''));
+                const parsed = JSON.parse(decoded);
+                const updated = (parsed.resources || []).filter(r => r.id !== id);
+                const encoded = btoa(unescape(encodeURIComponent(JSON.stringify({ resources: updated }, null, 2))));
+
+                await githubPut(
+                    `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${JSON_FILE}`,
+                    {
+                        message: `Suppression ressource : ${resource.title}`,
+                        content: encoded,
+                        sha: fileData.sha,
+                        branch: GITHUB_BRANCH
+                    },
+                    token
+                );
+            }
+
+            alert('✅ Document supprimé.');
+            loadResources();
+
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert('❌ Erreur suppression : ' + error.message);
+        }
+    };
+
+    // ===================================================
+    // UTILITAIRES
+    // ===================================================
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
     function formatBytes(bytes, decimals = 2) {
         if (!+bytes) return '0 Bytes';
         const k = 1024;
@@ -335,103 +546,4 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
     }
 
-    function getDefaultResources() {
-        return [
-            {
-                id: 'demo-1',
-                title: 'Chapitre 1 : Optique Géométrique - Principes de base',
-                category: 'cours',
-                module: 'Optique',
-                fileName: 'Chap1_Optique.pdf',
-                size: '2.4 MB',
-                date: '01/09/2025',
-                downloads: 120
-            },
-            {
-                id: 'demo-2',
-                title: 'Série TD N°1 : Réflexion et Réfraction',
-                category: 'td',
-                module: 'Optique',
-                fileName: 'TD1_Optique.pdf',
-                size: '850 KB',
-                date: '15/09/2025',
-                downloads: 85
-            },
-            {
-                id: 'demo-3',
-                title: 'Examen Final 2024 - Session Normale',
-                category: 'examens',
-                module: 'Électrostatique',
-                fileName: 'Exam2024_Electro.pdf',
-                size: '1.5 MB',
-                date: '20/06/2025',
-                downloads: 240
-            }
-        ];
-    }
-
-    // --- Expose functions for inline HTML calls ---
-    window.downloadResource = function (id) {
-        const resource = resources.find(r => r.id === id);
-
-        if (!resource) {
-            alert('❌ Ressource introuvable.');
-            return;
-        }
-
-        // Demo resources (no real file)
-        if (id.startsWith('demo-')) {
-            alert('📁 Ce document est un exemple de démonstration.\nAucun fichier réel n\'est associé.');
-            return;
-        }
-
-        // Firebase resource: use download URL
-        if (resource.downloadURL) {
-            // Increment download counter in Firestore
-            dbRef.doc(id).update({
-                downloads: firebase.firestore.FieldValue.increment(1)
-            }).catch(err => console.warn('Could not update download count:', err));
-
-            // Open the file in a new tab (triggers download for PDFs)
-            const link = document.createElement('a');
-            link.href = resource.downloadURL;
-            link.target = '_blank';
-            link.download = resource.fileName || 'document.pdf';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } else {
-            alert('📁 Aucun fichier associé à cette ressource.');
-        }
-    };
-
-    window.deleteResource = async function (id) {
-        if (!confirm('Supprimer ce document ?')) return;
-
-        const resource = resources.find(r => r.id === id);
-
-        // Demo resources: just remove from display
-        if (id.startsWith('demo-')) {
-            resources = resources.filter(r => r.id !== id);
-            renderAllResources();
-            return;
-        }
-
-        try {
-            // Delete file from Firebase Storage
-            if (resource && resource.storagePath) {
-                await storageRef.child(resource.storagePath).delete();
-            }
-
-            // Delete metadata from Firestore
-            await dbRef.doc(id).delete();
-
-            // Reload
-            await loadResources();
-            alert('✅ Document supprimé.');
-        } catch (error) {
-            console.error('Delete error:', error);
-            alert('❌ Erreur lors de la suppression : ' + error.message);
-        }
-    };
 });

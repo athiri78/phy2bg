@@ -65,12 +65,45 @@
                         <span class="tab-icon">📝</span> Travaux Dirigés (TD)
                     </button>
                     <button class="tab-btn" data-tab="examens">
-                        <span class="tab-icon">🎓</span> Examens & Corrigés
+                        <span class="tab-icon">🎓</span> Examens &amp; Corrigés
                     </button>
                 </div>
             </div>
 
-            <!-- Upload Modal (Hidden by default) -->
+            <!-- GitHub Token Modal (admin setup) -->
+            <div id="tokenModal" class="modal-overlay hidden">
+                <div class="modal-content" style="max-width: 480px;">
+                    <div class="modal-header">
+                        <h3>🔑 Configuration GitHub</h3>
+                        <button id="closeTokenModalBtn" class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p style="margin-bottom:1rem; color: var(--text-secondary); font-size:0.95em;">
+                            Pour publier des documents, entrez votre <strong>GitHub Personal Access Token</strong>.<br>
+                            Il sera sauvegardé localement dans votre navigateur.
+                        </p>
+                        <div
+                            style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 1rem; margin-bottom: 1.2rem; font-size: 0.88em; color: #0369a1;">
+                            📋 <strong>Créer un token :</strong><br>
+                            github.com → Settings → Developer settings<br>
+                            → Personal access tokens → Tokens (classic)<br>
+                            → Generate new token → Cochez <code>repo</code> → Generate
+                        </div>
+                        <div class="form-group">
+                            <label for="githubTokenInput">Personal Access Token</label>
+                            <input type="password" id="githubTokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                                style="font-family: monospace;">
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" id="cancelTokenBtn">Annuler</button>
+                            <button type="button" class="btn-primary" id="saveTokenBtn">Enregistrer &amp;
+                                Continuer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Modal -->
             <div id="uploadModal" class="modal-overlay hidden">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -155,9 +188,7 @@
                     <h3>Aucun cours disponible</h3>
                     <p>Soyez le premier à partager un cours !</p>
                 </div>
-                <div class="resources-grid" id="cours-grid">
-                    <!-- Les cartes seront injectées dynamiquement via JS -->
-                </div>
+                <div class="resources-grid" id="cours-grid"></div>
             </section>
 
             <!-- Content Grid : TD -->
@@ -186,33 +217,6 @@
 
         </div>
     </main>
-
-    <!-- Firebase SDK (v9 compat mode via CDN) -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
-    <!-- Firebase Configuration -->
-    <script>
-        // ============================================================
-        // ⚠️ REMPLACEZ CES VALEURS par celles de votre projet Firebase
-        // Consultez : https://console.firebase.google.com → Paramètres
-        // ============================================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyAkweiIkZYEDYeQuyn5cUzIum1lhJNORW0",
-            authDomain: "ph2bg-161fc.firebaseapp.com",
-            projectId: "ph2bg-161fc",
-            storageBucket: "ph2bg-161fc.firebasestorage.app",
-            messagingSenderId: "574085155478",
-            appId: "1:574085155478:web:8e3b840b53576e0c0710b7",
-            measurementId: "G-HDP3HP6Z88"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const storage = firebase.storage();
-        const db = firebase.firestore();
-    </script>
 
     <script src="auth.js"></script>
     <script src="resources.js"></script>
