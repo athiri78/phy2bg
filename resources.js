@@ -109,8 +109,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     document.getElementById('saveTokenBtn').addEventListener('click', () => {
         const token = document.getElementById('githubTokenInput').value.trim();
-        if (!token || !token.startsWith('ghp_')) {
-            alert('⚠️ Token invalide. Il doit commencer par "ghp_".\nVérifiez que vous avez copié le token complet depuis GitHub.');
+        if (!token || (!token.startsWith('ghp_') && !token.startsWith('github_pat_'))) {
+            alert('⚠️ Token invalide. Il doit commencer par "ghp_" ou "github_pat_".\nVérifiez que vous avez copié le token complet depuis GitHub.');
             return;
         }
         saveToken(token);
