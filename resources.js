@@ -93,6 +93,16 @@ function init() {
 
     loadingSpinner = document.getElementById("loadingSpinner");
 
+    // Masquer le bouton d'ajout pour les non-admins
+    const uploadBtn = document.getElementById("uploadTriggerBtn");
+    if (uploadBtn) {
+        if (typeof isAdmin === 'function' && !isAdmin()) {
+            uploadBtn.style.display = 'none';
+        } else {
+            uploadBtn.style.display = 'inline-flex';
+        }
+    }
+
     progressContainer = document.getElementById("uploadProgressContainer");
     progressFill = document.getElementById("uploadProgressFill");
     progressPercent = document.getElementById("uploadProgressPercent");
