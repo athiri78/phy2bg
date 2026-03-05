@@ -8,26 +8,56 @@
 document.addEventListener("DOMContentLoaded", init);
 
 // =======================================================
-// 1. CONFIGURATION
+// 1. CONFIGURATION GITHUB (Dynamique via localStorage)
 // =======================================================
 
-const GITHUB_OWNER = "athiri78";
-const GITHUB_REPO = "phy2bg";
-const GITHUB_BRANCH = "main";
+function getGhConfig(key, defaultValue) {
+    return localStorage.getItem(`gh_pdf_${key}`) || defaultValue;
+}
 
-const PDF_FOLDER = "pdfs";
-const JSON_FILE = "resources.json";
+function getGhOwner() { return getGhConfig('owner', 'athiri78'); }
+function getGhRepo() { return getGhConfig('repo', 'phy2bg'); }
+function getGhBranch() { return getGhConfig('branch', 'main'); }
+function getGhFolder() { return getGhConfig('folder', 'pdfs'); }
 
-const BASE_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}`;
+function getBaseUrl() {
+    return `https://${getGhOwner()}.github.io/${getGhRepo()}`;
+}
 
 // =======================================================
 // 2. TOKEN GITHUB
 // =======================================================
 
-const GITHUB_TOKEN = "github_pat_XXXXXXXXXXXXXXXXXXXXXXXX";
-
 function getToken() {
-    return GITHUB_TOKEN;
+    return localStorage.getItem('gh_pdf_token') || '';
+}
+
+function saveTokenConfig() {
+    const owner = document.getElementById('ghOwnerInput').value.trim();
+    const repo = document.getElementById('ghRepoInput').value.trim();
+    const branch = document.getElementById('ghBranchInput').value.trim();
+    const folder = document.getElementById('ghFolderInput').value.trim();
+    const token = document.getElementById('githubTokenInput').value.trim();
+
+    if (!token) {
+        alert('⚠️ Veuillez entrer un token GitHub valide.');
+        return false;
+    }
+
+    localStorage.setItem('gh_pdf_owner', owner);
+    localStorage.setItem('gh_pdf_repo', repo);
+    localStorage.setItem('gh_pdf_branch', branch);
+    localStorage.setItem('gh_pdf_folder', folder);
+    localStorage.setItem('gh_pdf_token', token);
+    return true;
+}
+
+function populateTokenModal() {
+    document.getElementById('ghOwnerInput').value = getGhOwner();
+    document.getElementById('ghRepoInput').value = getGhRepo();
+    document.getElementById('ghBranchInput').value = getGhBranch();
+    document.getElementById('ghFolderInput').value = getGhFolder();
+    document.getElementById('githubTokenInput').value = getToken();
 }
 
 // =======================================================
@@ -111,7 +141,14 @@ function initTabs() {
 function initUploadModal() {
 
     document.getElementById("uploadTriggerBtn")
-        .addEventListener("click", () => modal.classList.remove("hidden"));
+        .addEventListener("click", () => {
+            if (!getToken()) {
+                populateTokenModal();
+                tokenModal.classList.remove("hidden");
+            } else {
+                modal.classList.remove("hidden");
+            }
+        });
 
     document.getElementById("closeModalBtn")
         .addEventListener("click", closeModal);
@@ -135,6 +172,25 @@ function closeModal() {
     submitBtn.textContent = "Publier le document";
 
 }
+
+// =======================================================
+// 6.5. MODALE TOKEN GITHUB
+// =======================================================
+
+document.getElementById('closeTokenModalBtn').addEventListener('click', () => {
+    tokenModal.classList.add('hidden');
+});
+
+document.getElementById('cancelTokenBtn').addEventListener('click', () => {
+    tokenModal.classList.add('hidden');
+});
+
+document.getElementById('saveTokenBtn').addEventListener('click', () => {
+    if (saveTokenConfig()) {
+        tokenModal.classList.add('hidden');
+        modal.classList.remove('hidden');
+    }
+});
 
 // =======================================================
 // 7. DRAG & DROP
@@ -222,20 +278,21 @@ async function uploadDocument(e) {
         const safeFileName =
             `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
 
-        const filePath = `${PDF_FOLDER}/${safeFileName}`;
+        const folder = getGhFolder().replace(/^\/|\/$/g, '');
+        const filePath = folder ? `${folder}/${safeFileName}` : safeFileName;
 
         await githubPut(
-            `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`,
+            `/repos/${getGhOwner()}/${getGhRepo()}/contents/${filePath}`,
             {
                 message: `Ajout ressource : ${title}`,
                 content: base64Content,
-                branch: GITHUB_BRANCH
+                branch: getGhBranch()
             }
         );
 
         startProgress("Mise à jour resources.json...", 70);
 
-        const pdfURL = `${BASE_URL}/${filePath}`;
+        const pdfURL = `${getBaseUrl()}/${filePath}`;
 
         const newEntry = {
 
@@ -270,9 +327,15 @@ async function uploadDocument(e) {
 
         console.error(error);
 
-        alert("Erreur upload : " + error.message);
+        if (error.status === 401 || error.status === 403) {
+            alert("Erreur: Token invalide ou expiré (ou manque de droits).");
+            localStorage.removeItem('gh_pdf_token');
+        } else {
+            alert("Erreur upload : " + error.message);
+        }
 
         submitBtn.disabled = false;
+        finishProgressError();
 
     }
 
@@ -288,8 +351,9 @@ async function loadResources() {
 
     try {
 
-        const res =
-            await fetch(`${BASE_URL}/${JSON_FILE}?v=${Date.now()}`);
+        let jsonUrl = `${getBaseUrl()}/${JSON_FILE}?v=${Date.now()}`;
+
+        const res = await fetch(jsonUrl);
 
         if (res.ok) {
 
@@ -326,7 +390,7 @@ async function updateResourcesJson(newEntry) {
     let existing = [];
 
     const check = await githubGet(
-        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${JSON_FILE}`
+        `/repos/${getGhOwner()}/${getGhRepo()}/contents/${JSON_FILE}`
     );
 
     if (check.ok) {
@@ -341,7 +405,15 @@ async function updateResourcesJson(newEntry) {
 
     }
 
-    existing.push(newEntry);
+    // mode ajout ou mode remplacement (pour la suppression)
+    if (newEntry) {
+        existing.push(newEntry);
+    } else {
+        // Si newEntry est null, on s'attend à ce que existing soit modifié par l'appelant,
+        // mais dans notre implémentation de deleteResource, on passe directement la liste modifiée 
+        // à une version légèrement différente de githubPut. Donc updateResourcesJson n'est appelée 
+        // que pour l'ajout.
+    }
 
     const updated =
         JSON.stringify({ resources: existing }, null, 2);
@@ -350,12 +422,12 @@ async function updateResourcesJson(newEntry) {
         btoa(unescape(encodeURIComponent(updated)));
 
     await githubPut(
-        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${JSON_FILE}`,
+        `/repos/${getGhOwner()}/${getGhRepo()}/contents/${JSON_FILE}`,
         {
-            message: "Update resources",
+            message: newEntry ? "Update resources" : "Delete resource",
             content: encoded,
             sha,
-            branch: GITHUB_BRANCH
+            branch: getGhBranch()
         }
     );
 
@@ -365,11 +437,11 @@ async function updateResourcesJson(newEntry) {
 // 11. GITHUB API HELPERS
 // =======================================================
 
-function githubPut(path, body) {
+function githubPut(path, body, method = "PUT") {
 
     return fetch(`https://api.github.com${path}`, {
 
-        method: "PUT",
+        method: method,
 
         headers: {
 
@@ -381,6 +453,13 @@ function githubPut(path, body) {
 
         body: JSON.stringify(body)
 
+    }).then(res => {
+        if (!res.ok) {
+            const err = new Error(`GitHub API Error: ${res.status}`);
+            err.status = res.status;
+            throw err;
+        }
+        return res;
     });
 
 }
@@ -440,16 +519,102 @@ function createResourceCard(res) {
 
     div.className = "resource-card";
 
+    // Check if the user is an admin by checking the toggle button state 
+    // This is defined in auth.js. Alternatively, use typeof isAdmin !== 'undefined' && isAdmin()
+    const adminToggle = document.getElementById("adminToggleBtn");
+    const isUserAdmin = adminToggle && adminToggle.textContent.includes("Désactiver");
+
+    const deleteBtnHTML = isUserAdmin ? `<button class="btn-secondary" style="color: #ef4444; border-color: #ef4444; margin-top: 0.5rem;" onclick="deleteResource('${res.id}')">Supprimer</button>` : '';
+
     div.innerHTML = `
-        <h4>${res.title}</h4>
-        <p>${res.module}</p>
-        <span>${res.date} • ${res.size}</span>
-        <a href="${res.downloadURL}" target="_blank">Télécharger</a>
+        <div style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
+            <div style="font-size: 2rem;">📄</div>
+            <div>
+                <h4 style="margin: 0 0 0.5rem 0;">${res.title}</h4>
+                <p style="margin: 0; color: var(--text-secondary); font-size: 0.9em;">Module: ${res.module}</p>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem;">
+            <span style="font-size: 0.85em; color: var(--text-secondary);">${res.date} • ${res.size}</span>
+            <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                <a href="${res.downloadURL}" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9em; text-decoration: none;" download>Télécharger</a>
+                ${deleteBtnHTML}
+            </div>
+        </div>
     `;
 
     return div;
 
 }
+
+// =======================================================
+// 13.5. SUPPRESSION DES RESSOURCES
+// =======================================================
+
+window.deleteResource = async function (id) {
+    if (!confirm('Voulez-vous vraiment supprimer ce document ?')) return;
+
+    if (!getToken()) {
+        alert("Vous devez configurer votre token GitHub (bouton 'Ajouter un document') avant de pouvoir supprimer.");
+        return;
+    }
+
+    const resource = resources.find(r => r.id === id);
+    if (!resource) return;
+
+    loadingSpinner.style.display = "flex";
+
+    try {
+        // 1. Get the SHA of the PDF file to delete it
+        const fileCheck = await githubGet(`/repos/${getGhOwner()}/${getGhRepo()}/contents/${resource.filePath}`);
+
+        if (fileCheck.ok) {
+            const fileData = await fileCheck.json();
+            // Delete the PDF
+            await fetch(`https://api.github.com/repos/${getGhOwner()}/${getGhRepo()}/contents/${resource.filePath}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `token ${getToken()}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Delete resource PDF: ${resource.title}`,
+                    sha: fileData.sha,
+                    branch: getGhBranch()
+                })
+            });
+        }
+
+        // 2. Remove from resources.json
+        const jsonCheck = await githubGet(`/repos/${getGhOwner()}/${getGhRepo()}/contents/${JSON_FILE}`);
+        if (jsonCheck.ok) {
+            const jsonData = await jsonCheck.json();
+            const decoded = atob(jsonData.content.replace(/\n/g, ""));
+            const parsed = JSON.parse(decoded);
+            const existing = parsed.resources || [];
+
+            const updated = existing.filter(r => r.id !== id);
+
+            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify({ resources: updated }, null, 2))));
+
+            await githubPut(`/repos/${getGhOwner()}/${getGhRepo()}/contents/${JSON_FILE}`, {
+                message: `Remove resource from index: ${resource.title}`,
+                content: encoded,
+                sha: jsonData.sha,
+                branch: getGhBranch()
+            });
+        }
+
+        alert('Document supprimé avec succès.');
+        loadResources();
+
+    } catch (err) {
+        console.error(err);
+        alert(`Erreur lors de la suppression : ${err.message}`);
+    } finally {
+        loadingSpinner.style.display = "none";
+    }
+};
 
 // =======================================================
 // 14. UTILITAIRES
@@ -493,19 +658,29 @@ function startProgress(text, percent) {
     progressContainer.classList.remove("hidden");
 
     progressFill.style.width = percent + "%";
+    progressFill.style.backgroundColor = "var(--primary-color)";
 
     progressPercent.textContent = percent + "%";
 
     progressText.textContent = text;
+    progressText.style.color = "var(--text-color)";
 
 }
 
 function finishProgress() {
 
     progressFill.style.width = "100%";
+    progressFill.style.backgroundColor = "#10b981"; // success green
 
     progressPercent.textContent = "100%";
 
-    progressText.textContent = "Document publié";
+    progressText.textContent = "Document publié avec succès !";
+    progressText.style.color = "#10b981";
 
+}
+
+function finishProgressError() {
+    progressFill.style.backgroundColor = "#ef4444"; // error red
+    progressText.textContent = "Erreur lors de la publication.";
+    progressText.style.color = "#ef4444";
 }

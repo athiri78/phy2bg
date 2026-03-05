@@ -79,16 +79,36 @@
                     </div>
                     <div class="modal-body">
                         <p style="margin-bottom:1rem; color: var(--text-secondary); font-size:0.95em;">
-                            Pour publier des documents, entrez votre <strong>GitHub Personal Access Token</strong>.<br>
-                            Il sera sauvegardé localement dans votre navigateur.
+                            Pour publier des documents, entrez vos informations GitHub.<br>
+                            Elles seront sauvegardées localement dans votre navigateur.
                         </p>
+
+                        <div class="form-group">
+                            <label for="ghOwnerInput">Propriétaire du Dépôt (Owner)</label>
+                            <input type="text" id="ghOwnerInput" placeholder="ex: athiri78" value="athiri78">
+                        </div>
+                        <div class="form-group">
+                            <label for="ghRepoInput">Nom du Dépôt (Repo)</label>
+                            <input type="text" id="ghRepoInput" placeholder="ex: phy2bg" value="phy2bg">
+                        </div>
+                        <div class="form-group">
+                            <label for="ghBranchInput">Branche</label>
+                            <input type="text" id="ghBranchInput" placeholder="ex: main" value="main">
+                        </div>
+                        <div class="form-group">
+                            <label for="ghFolderInput">Dossier cible</label>
+                            <input type="text" id="ghFolderInput" placeholder="ex: pdfs" value="pdfs">
+                        </div>
+
                         <div
-                            style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 1rem; margin-bottom: 1.2rem; font-size: 0.88em; color: #0369a1;">
+                            style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 1rem; margin-bottom: 1.2rem; margin-top: 1rem; font-size: 0.88em; color: #0369a1;">
                             📋 <strong>Créer un token :</strong><br>
                             github.com → Settings → Developer settings<br>
-                            → Personal access tokens → Tokens (classic)<br>
-                            → Generate new token → Cochez <code>repo</code> → Generate
+                            → Personal access tokens → Fine-grained tokens<br>
+                            → Generate new token → Sélectionnez votre repo → Cochez
+                            <code>Contents: Read and write</code>
                         </div>
+
                         <div class="form-group">
                             <label for="githubTokenInput">Personal Access Token</label>
                             <input type="password" id="githubTokenInput" placeholder="ghp_... ou github_pat_..."
