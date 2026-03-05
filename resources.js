@@ -5,6 +5,8 @@
 // Index : resources.json
 // =======================================================
 
+const JSON_FILE = "resources.json";
+
 document.addEventListener("DOMContentLoaded", init);
 
 // =======================================================
@@ -535,10 +537,7 @@ function createResourceCard(res) {
 
     div.className = "resource-card";
 
-    // Check if the user is an admin by checking the toggle button state 
-    // This is defined in auth.js. Alternatively, use typeof isAdmin !== 'undefined' && isAdmin()
-    const adminToggle = document.getElementById("adminToggleBtn");
-    const isUserAdmin = adminToggle && adminToggle.textContent.includes("Désactiver");
+    const isUserAdmin = typeof isAdmin === 'function' && isAdmin();
 
     const deleteBtnHTML = isUserAdmin ? `<button class="btn-secondary" style="color: #ef4444; border-color: #ef4444; margin-top: 0.5rem;" onclick="deleteResource('${res.id}')">Supprimer</button>` : '';
 
