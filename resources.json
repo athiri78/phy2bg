@@ -2,13 +2,25 @@
   "resources": [
     {
       "id": "1772739468540",
-      "title": "optique séance 1",
+      "title": "optique sÃ©ance 1",
       "category": "cours",
       "module": "Optique",
       "fileName": "test_upload.pdf",
       "filePath": "pdfs/1772739467634_test_upload.pdf",
       "downloadURL": "https://athiri78.github.io/phy2bg/pdfs/1772739467634_test_upload.pdf",
       "size": "38.00 Bytes",
+      "date": "05/03/2026",
+      "downloads": 0
+    },
+    {
+      "id": "1772739515439",
+      "title": "optique séance 1",
+      "category": "cours",
+      "module": "Optique",
+      "fileName": "cours Séance 1_2.pdf",
+      "filePath": "pdfs/1772739508413_cours_S_ance_1_2.pdf",
+      "downloadURL": "https://athiri78.github.io/phy2bg/pdfs/1772739508413_cours_S_ance_1_2.pdf",
+      "size": "1.52 MB",
       "date": "05/03/2026",
       "downloads": 0
     }
