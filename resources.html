@@ -157,33 +157,52 @@
                                 </select>
                             </div>
 
-                            <div class="upload-area" id="dropZone">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="17 8 12 3 7 8"></polyline>
-                                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                                </svg>
-                                <p>Glissez-déposez votre fichier PDF ici<br>ou <span class="browser-link">parcourir les
-                                        fichiers</span></p>
-                                <input type="file" id="fileInput" accept=".pdf" hidden>
-                                <div id="fileNamePreview" class="file-preview"></div>
+                            <h3
+                                style="margin-top: 2rem; margin-bottom: 1.5rem; font-size: 1.4rem; color: #1f2937; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem;">
+                                2. Uploader un PDF (Écrire)</h3>
+
+                            <input type="file" id="fileInput" accept=".pdf" hidden>
+
+                            <div class="upload-area" id="dropZone"
+                                style="border: 2px dashed #e2e8f0; border-radius: 8px; padding: 3rem 2rem; text-align: center; cursor: pointer; background-color: #f8fafc; margin-bottom: 1.5rem; transition: all 0.2s;">
+                                <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z"
+                                            fill="#ede9fe" />
+                                        <path d="M14 2V8H20" fill="#ddd6fe" opacity="0.5" />
+                                        <path d="M8 13H16M8 17H16M8 9H11" stroke="#8b5cf6" stroke-width="2"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                </div>
+                                <h4 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #1e293b; font-weight: bold;">
+                                    Cliquez ou glissez un fichier PDF ici</h4>
+                                <p style="margin: 0; color: #64748b; font-size: 0.95rem;" id="fileNamePreview">Aucun
+                                    fichier sélectionné</p>
                             </div>
 
                             <!-- Progress Bar -->
-                            <div id="uploadProgressContainer" class="upload-progress-container hidden">
-                                <div class="upload-progress-label">
+                            <div id="uploadProgressContainer" class="upload-progress-container hidden"
+                                style="margin-bottom: 1.5rem;">
+                                <div class="upload-progress-label"
+                                    style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #64748b; font-size: 0.9rem;">
                                     <span id="uploadProgressText">Upload en cours...</span>
                                     <span id="uploadProgressPercent">0%</span>
                                 </div>
-                                <div class="upload-progress-bar">
-                                    <div id="uploadProgressFill" class="upload-progress-fill"></div>
+                                <div class="upload-progress-bar"
+                                    style="height: 10px; background: #e5e7eb; border-radius: 999px; overflow: hidden;">
+                                    <div id="uploadProgressFill" class="upload-progress-fill"
+                                        style="height: 100%; width: 0%; background: #2563eb; transition: width 0.3s ease;">
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="modal-actions">
-                                <button type="button" class="btn-secondary" id="cancelBtn">Annuler</button>
-                                <button type="submit" class="btn-primary" id="submitBtn">Publier le document</button>
-                            </div>
+                            <button type="submit" class="btn-primary" id="submitBtn"
+                                style="width: 100%; justify-content: center; margin-top: 0.5rem; font-size: 1rem; padding: 0.8rem; border-radius: 6px; background-color: #60a5fa; border: none; color: white; cursor: pointer;">Envoyer
+                                vers GitHub</button>
+                            <button type="button" class="btn-secondary" id="cancelBtn"
+                                style="width: 100%; justify-content: center; margin-top: 0.75rem; font-size: 1rem; padding: 0.8rem; border-radius: 6px; cursor: pointer; border: 1px solid #e2e8f0; background: white; color: #64748b;">Annuler</button>
                         </form>
                     </div>
                 </div>

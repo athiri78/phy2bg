@@ -174,12 +174,18 @@ function closeModal() {
 
     form.reset();
 
+    // Réinitialiser la zone d'affichage du fichier
+    const fileNamePreview = document.getElementById("fileNamePreview");
+    if (fileNamePreview) {
+        fileNamePreview.textContent = "Aucun fichier sélectionné";
+    }
+
     progressContainer.classList.add("hidden");
 
     progressFill.style.width = "0%";
 
     submitBtn.disabled = false;
-    submitBtn.textContent = "Publier le document";
+    submitBtn.textContent = "Envoyer vers GitHub";
 
 }
 
